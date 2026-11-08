@@ -57,3 +57,4 @@ export interface OrderRecord {
   checkoutUrl?: string;
   qrCodeUrl?: string;
 }
+

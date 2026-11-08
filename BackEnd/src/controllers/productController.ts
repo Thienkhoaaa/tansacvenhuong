@@ -18,3 +18,4 @@ export const getProductById = (req: Request, res: Response) => {
   }
   return res.json({ success: true, data: product });
 };
+

@@ -36,3 +36,4 @@ app.listen(PORT, () => {
   console.log(`🌸 Tàn Sắc Vẹn Hương BackEnd is running at http://localhost:${PORT}`);
   console.log(`💳 PayOS Status: ${isPayOSConfigured ? 'Connected' : 'Simulation Mode (Free VietQR)'}`);
 });
+

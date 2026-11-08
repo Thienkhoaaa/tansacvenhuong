@@ -183,3 +183,4 @@ export const ProductDetailModal: React.FC = () => {
     </AnimatePresence>
   );
 };
+

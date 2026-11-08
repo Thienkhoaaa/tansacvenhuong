@@ -83,3 +83,4 @@ export const products: Product[] = [
     reviewsCount: 87
   }
 ];
+
