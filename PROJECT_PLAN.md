@@ -1,6 +1,6 @@
 # 🌟 BẢN KẾ HOẠCH TỔNG THỂ DỰ ÁN: TÀN SẮC VẸN HƯƠNG
 
-> **Định hướng cốt lõi:** Website trải nghiệm duy mỹ cao cấp (Modern Oriental / Luxury Minimalist), giao diện mượt mà với animation tinh tế, responsive 100% mọi màn hình, cổng thanh toán QR Code tự động **hoàn toàn miễn phí** (0% phí giao dịch) và sẵn sàng deploy public miễn phí.
+> **Định hướng cốt lõi:** Website trải nghiệm duy mỹ cao cấp (Modern Oriental / Luxury Minimalist), giao diện mượt mà với animation tinh tế, responsive 100% mọi màn hình, **mua hàng nhanh không cần đăng nhập (Frictionless Guest Checkout)**, cổng thanh toán QR Code tự động **hoàn toàn miễn phí** (0% phí giao dịch), lưu trữ dữ liệu trên **Cloud Database miễn phí** và sẵn sàng deploy public.
 
 ---
 
@@ -10,118 +10,159 @@
 | :--- | :--- |
 | **Tên dự án** | **Tàn Sắc Vẹn Hương** (Sản phẩm hương thơm / Trầm hương / Nước hoa nghệ thuật / Phong cách sống) |
 | **Phong cách thiết kế (Design Language)** | **Modern Oriental Minimalist / Dark Luxury** kết hợp chuyển động mượt mà (chữ uốn lượn như khói hương, hiệu ứng trôi lơ lửng, chuyển cảnh êm dịu). |
-| **Mục tiêu người dùng** | Trải nghiệm mua sắm không ngắt quãng (Seamless Buying Flow) – từ xem sản phẩm, cảm nhận câu chuyện hương thơm đến thanh toán QR trong chưa đầy 1 phút. |
-| **Nền tảng thanh toán** | **PayOS (VietQR Pro)**: 0đ phí duy trì, 0% phí giao dịch, xác thực tức thì qua Webhook. |
-| **Môi trường triển khai** | Vercel (FrontEnd) + Render / Supabase (BackEnd & Database) – Miễn phí trọn đời (Free Tier). |
+| **Trải nghiệm mua hàng (UX)** | **Mua hàng siêu tốc không cần đăng nhập (1-Step Guest Checkout)**: Không yêu cầu tạo tài khoản hay mật khẩu rườm rà. Chỉ cần điền thông tin tối giản (Họ tên, SĐT, Địa chỉ) để hoàn tất đơn hàng trong 30 giây. |
+| **Cơ sở dữ liệu (Cloud Database)** | **Cloud Database Miễn phí (MongoDB Atlas / Firebase Firestore)**: Lưu trữ danh mục sản phẩm, nốt hương nghệ thuật và lịch sử đơn hàng an toàn trên mây. |
+| **Nền tảng thanh toán** | **PayOS (VietQR Napas 24/7)**: 0đ phí duy trì, 0% phí giao dịch, sinh mã QR động và xác thực tức thì qua Webhook 1–3s. |
+| **Môi trường triển khai** | Vercel (FrontEnd) + Render / Cloud Database (BackEnd) – Miễn phí trọn đời (Free Tier). |
 
 ---
 
-## 2. KIẾN TRÚC CÔNG NGHỆ ĐỀ XUẤT (TECH STACK)
+## 2. QUY CHUẨN MUA HÀNG KHÔNG CẦN ĐĂNG NHẬP (GUEST CHECKOUT)
+
+> [!TIP]
+> **Tại sao không cần đăng nhập?**
+> Với các mặt hàng mang tính cảm xúc cao, quà tặng nghệ thuật như nước hoa và trầm hương, việc bắt khách hàng phải đăng ký tài khoản (nhập email, tạo mật khẩu, xác thực OTP) làm tăng tỷ lệ thoát đơn hàng (cart abandonment) lên tới 35-45%. Quy trình **Guest Checkout** giúp khách hàng mua sắm liền mạch không ngắt quãng.
+
+### 2.1. Luồng mua hàng tối giản (Minimal Checkout Flow):
+1. Khách chọn sản phẩm & nhấn **"Mua Ngay"** hoặc **"Thêm vào giỏ"**.
+2. Mở trực tiếp Modal Thanh Toán (Bottom-sheet trên Mobile, Centered Modal trên Desktop).
+3. **Chỉ yêu cầu 3 thông tin thiết yếu:**
+   - **Họ và tên quý khách** (Để ghi thông tin người nhận).
+   - **Số điện thoại** (Dùng để nhân viên liên hệ giao vận + Định danh tra cứu đơn hàng).
+   - **Địa chỉ nhận hàng** (Số nhà, tên đường, khu vực).
+   - *(Ghi chú thêm: Tùy chọn, ví dụ: gói quà, giao giờ hành chính...)*.
+4. Chọn phương thức: **Chuyển khoản VietQR Napas 24/7 (Free 0%)** hoặc **COD (Thanh toán khi nhận)**.
+5. Quét mã QR thanh toán -> Màn hình nhảy sang trạng thái "Thành công" và lưu đơn vào Cloud Database.
+
+### 2.2. Cơ chế tra cứu đơn hàng cho khách:
+- Khách không cần tài khoản, có thể xem lại đơn hàng thông qua:
+  - **Mã đơn hàng (`#orderCode`)** hiển thị ngay sau khi thanh toán.
+  - **Số điện thoại** của khách (BackEnd cung cấp API `/api/orders/lookup?phone=...` để tra cứu các đơn hàng đã đặt).
+  - Trình duyệt tự động lưu lịch sử đơn hàng vào `localStorage` của khách để mở xem lại nhanh.
+
+---
+
+## 3. KẾ HOẠCH TÍCH HỢP CLOUD DATABASE (FIREBASE vs MONGODB ATLAS)
+
+Để lưu trữ sản phẩm và đơn hàng bền vững trên Cloud (thay vì in-memory), chúng ta có 2 giải pháp Cloud Database hàng đầu có gói miễn phí vĩnh viễn (Free Tier):
+
+### 3.1. Bảng so sánh chuyên sâu
+
+| Tiêu chí | 🍃 **MongoDB Atlas (Khuyên dùng)** | 🔥 **Firebase Firestore** |
+| :--- | :--- | :--- |
+| **Gói miễn phí (Free Tier)** | **M0 Sandbox Free vĩnh viễn**: 512MB RAM/Storage, tối đa 500 kết nối, không giới hạn số lượt đọc/ghi hàng ngày. | **Spark Plan Free**: 1GB Storage, 50,000 lượt đọc/ngày, 20,000 lượt ghi/ngày. |
+| **Vị trí Server (Latency)** | Chọn được cụm **Singapore (AWS `ap-southeast-1`)** – Độ trễ về Việt Nam siêu thấp (< 30ms). | Cụm **Singapore (`asia-southeast1`)** – Tốc độ rất nhanh tại Việt Nam. |
+| **Phù hợp kiến trúc** | Cực kỳ tương thích với BackEnd **Node.js Express + TypeScript** hiện tại thông qua ODM `Mongoose`. Dễ viết query, populate, aggregate. | Phù hợp cho kiến trúc Serverless hoặc Realtime trực tiếp từ Client. Cần cài đặt `firebase-admin` trên Node.js. |
+| **Tính năng Real-time** | Cần kết hợp Webhook / Polling / Socket.io. | Có sẵn SDK Realtime Listener (`onSnapshot`) cực mạnh. |
+| **Cấu hình & Quản lý** | Cực kỳ trực quan: Tạo tài khoản, copy chuỗi `MONGODB_URI` vào file `.env` của BackEnd là chạy ngay. | Cần tạo Project trên Firebase Console, tạo Service Account JSON key để xác thực. |
+| **Đánh giá tổng quan** | ⭐ **Lựa chọn tối ưu nhất** cho hệ thống Express REST API độc lập, bảo mật và chuẩn công nghiệp. | ⭐ Rất mạnh nếu muốn tính năng thông báo Real-time đẩy thẳng xuống FrontEnd. |
+
+### 3.2. Quyết định đề xuất: **MongoDB Atlas + Mongoose**
+- **Lý do:** Dự án đã có kiến trúc BackEnd `Node.js Express TypeScript` hoàn chỉnh. MongoDB Atlas cung cấp mô hình dữ liệu Document NoSQL cực kỳ phù hợp với cấu trúc phân tầng nốt hương (`notes: { top, middle, base }`) và danh sách giỏ hàng lồng nhau.
+- **Dung lượng 512MB Free:** Đủ sức lưu trữ hơn 200.000 đơn hàng và hàng nghìn sản phẩm mà không tốn bất kỳ chi phí nào.
+
+### 3.3. Thiết kế Cấu trúc Dữ liệu (Database Schema)
+
+#### Collection `products` (Danh mục sản phẩm):
+```typescript
+{
+  _id: ObjectId,
+  id: String,           // Ví dụ: 'tsvh-01'
+  name: String,         // 'Tàn Dạ Trầm Y'
+  subtitle: String,     // 'Nước hoa nghệ thuật Extrait de Parfum'
+  category: String,     // 'nuoc-hoa' | 'tram-huong' | 'tinh-dau' | 'nen-thom'
+  price: Number,        // 1850000
+  originalPrice: Number,// 2200000 (tùy chọn)
+  volume: String,       // '50ml'
+  description: String,
+  story: String,
+  notes: {
+    top: [String],      // ['Hạt tiêu hồng', 'Cam Bergamot hun khói']
+    middle: [String],   // ['Trầm hương cổ thụ', 'Nhựa thơm Myrrh']
+    base: [String]      // ['Gỗ Đàn Hương Mysore', 'Hổ phách xám']
+  },
+  image: String,        // URL ảnh sắc nét
+  badge: String,        // 'Signature Blend'
+  inStock: Boolean,     // true
+  rating: Number,       // 4.9
+  reviewsCount: Number, // 128
+  createdAt: Date
+}
+```
+
+#### Collection `orders` (Đơn hàng Guest Checkout):
+```typescript
+{
+  _id: ObjectId,
+  orderCode: Number,    // Mã số nguyên duy nhất (Ví dụ: 82910472), dùng cho PayOS
+  customer: {
+    name: String,       // Họ tên khách
+    phone: String,      // Số điện thoại (chỉ mục index để tra cứu nhanh)
+    address: String,    // Địa chỉ giao nhận
+    notes: String       // Ghi chú nếu có
+  },
+  items: [
+    {
+      productId: String,
+      name: String,
+      price: Number,
+      quantity: Number,
+      image: String
+    }
+  ],
+  totalAmount: Number,  // Tổng tiền đơn hàng
+  paymentMethod: String,// 'vietqr' | 'cod'
+  status: String,       // 'PENDING' | 'PAID' | 'CANCELLED'
+  qrCodeUrl: String,    // Link ảnh VietQR động
+  payosPaymentLinkId: String,
+  createdAt: Date,
+  paidAt: Date          // Thời điểm thanh toán thành công
+}
+```
+
+---
+
+## 4. KIẾN TRÚC CÔNG NGHỆ TỔNG THỂ (TECH STACK)
 
 ```mermaid
 flowchart LR
-    subgraph Client ["Client Layer (FrontEnd)"]
-        UI["React / Next.js"] --> Tail["Tailwind CSS"]
-        UI --> Motion["Framer Motion (Animations)"]
-        UI --> Scroll["Lenis Smooth Scroll"]
+    subgraph Client ["Client Layer (FrontEnd - React 19 + Vite)"]
+        UI["UI Responsive (Tailwind v4)"] --> Motion["Framer Motion (Animations)"]
+        UI --> Guest["1-Step Guest Checkout (No Login)"]
     end
 
-    subgraph Server ["Server Layer (BackEnd)"]
-        API["Node.js / Express API"] --> Controller["Order & Payment Service"]
-        Controller --> DB[(PostgreSQL / Supabase)]
+    subgraph Server ["Server Layer (BackEnd - Express + TS)"]
+        API["REST API Router"] --> OrderCtrl["Order & Payment Controller"]
+        OrderCtrl --> CloudDB[(MongoDB Atlas / Firebase Cloud)]
     end
 
     subgraph PaymentGateway ["Cổng thanh toán Free"]
         PayOS["PayOS API (VietQR Napas 24/7)"]
-        Webhook["Webhook xác nhận tự động 1-2s"]
+        Webhook["Webhook xác thực tức thì 1-3s"]
     end
 
-    Client -->|Gửi giỏ hàng & tạo đơn| Server
-    Server -->|Gọi API tạo mã QR thanh toán| PayOS
-    PayOS -->|Hiển thị QR cho khách| Client
-    Client -.->|Khách quét app ngân hàng| PayOS
-    PayOS -->|Bắn webhook thành công| Webhook
+    Client -->|Gửi thông tin khách & giỏ hàng| Server
+    Server -->|Tạo mã đơn & lưu trạng thái PENDING| CloudDB
+    Server -->|Sinh mã VietQR động| PayOS
+    PayOS -->|Hiển thị QR cho khách quét| Client
+    Client -.->|Khách quét từ App ngân hàng bất kỳ| PayOS
+    PayOS -->|Bắn webhook chuyển khoản thành công| Webhook
     Webhook --> Server
-    Server -->|Cập nhật trạng thái 'Đã thanh toán'| Client
+    Server -->|Cập nhật trạng thái PAID| CloudDB
+    Server -->|Báo kết quả thành công| Client
 ```
 
-### Chi tiết các công nghệ:
-1. **FrontEnd:**
-   - **Framework:** `React 19` + `Vite` (hoặc `Next.js 15 App Router` nếu muốn SEO mạnh). Đề xuất: **React + Vite** hoặc **Next.js** độc lập trong thư mục `FrontEnd`.
-   - **Styling:** `Tailwind CSS v4` – Tối ưu responsive cực đại (`sm`, `md`, `lg`, `xl`, `2xl`).
-   - **Hiệu ứng & Chuyển động:** `Framer Motion` (bắt buộc cho các animation mượt, fade, stagger, slide, parallax, gesture), kết hợp thư viện cuộn mượt `lenis`.
-   - **Bộ icon & UI components:** `Lucide React` + `Radix UI / shadcn/ui` (cho drawer giỏ hàng, modal, popover, notification toast).
-
-2. **BackEnd:**
-   - **Runtime:** `Node.js` + `Express` (hoặc `Fastify`) viết bằng `TypeScript`.
-   - **Cơ sở dữ liệu (Database):** `Supabase (PostgreSQL)` hoặc `MongoDB Atlas` (đều có gói Free hào phóng, bảo mật cao).
-   - **ORM:** `Prisma` – Quản lý Schema sản phẩm, đơn hàng, hóa đơn cực kỳ trực quan và an toàn kiểu dữ liệu.
-
-3. **Cổng thanh toán MIỄN PHÍ:**
-   - **Lựa chọn tối ưu nhất: [PayOS](https://payos.vn)**.
-     - **Chi phí:** 0% phí giao dịch, 0đ duy trì (Hoàn toàn FREE).
-     - **Đối tượng:** Cá nhân hoặc doanh nghiệp đều đăng ký được dễ dàng (chỉ cần tài khoản ngân hàng cá nhân).
-     - **Cơ chế:** Tự sinh mã VietQR động chứa đúng số tiền và mã hóa đơn duy nhất. Khi người mua quét mã từ bất kỳ App ngân hàng nào (Vietcombank, MB, Techcombank, MoMo...), tiền về thẳng tài khoản bạn, PayOS phát hiện và gửi Webhook về BackEnd trong **1 - 3 giây** để kích hoạt trạng thái "Thanh toán thành công" trên màn hình của khách.
-
-4. **Triển khai (Deployment):**
-   - **FrontEnd:** Deploy tự động lên **Vercel** (Miễn phí, hỗ trợ CDN toàn cầu tốc độ cao, cấp sẵn chứng chỉ SSL HTTPS).
-   - **BackEnd:** Deploy lên **Render.com** hoặc **Railway** (Free/Starter tier) với biến môi trường an toàn.
-
 ---
 
-## 3. CHIẾN LƯỢC UI/UX, RESPONSIVE & ANIMATIONS
-
-> [!IMPORTANT]
-> Đối với thương hiệu mang tính mỹ thuật như "Tàn Sắc Vẹn Hương", giao diện chính là linh hồn quyết định khả năng chuyển đổi đơn hàng.
-
-### 3.1. Thiết kế Responsive đa tỉ lệ
-- **Mobile First Approach:** Thiết kế trải nghiệm ngón cái (Thumb-zone): Thanh điều hướng dưới đáy (Bottom bar), giỏ hàng dạng Bottom-sheet vuốt lên, nút "Mua ngay / Thanh toán" luôn ghim cố định nổi bật.
-- **Desktop Fluid Layout:** Sử dụng hệ thống lưới linh hoạt (CSS Grid & Flexbox) có thể co giãn tự nhiên từ màn hình laptop 13-inch tới màn hình rộng 2K/4K.
-- **Breakpoints chuẩn:**
-  - Phone: `360px - 640px` (tối ưu 1 cột, chạm vuốt mượt mà).
-  - Tablet: `641px - 1024px` (lưới 2 cột, menu ẩn hoặc co gọn).
-  - Desktop: `> 1024px` (lưới 3-4 cột, hiệu ứng hover, cursor tùy biến).
-
-### 3.2. Hệ thống Animation & Micro-interactions
-- **Page Transitions:** Chuyển đổi giữa các trang mượt mà không chớp nháy (AnimatePresence).
-- **Hero Section:** Tiêu đề xuất hiện dần theo dạng text reveal, hình ảnh hương thơm/sản phẩm có hiệu ứng nổi nhẹ nhàng (floating parallax).
-- **Product Showcase & Card:**
-  - Hover zoom nhẹ vào chất liệu sản phẩm kèm hiệu ứng bóng đổ mờ ảo (Soft ambient blur).
-  - Nút thêm vào giỏ hàng có animation nảy (spring bounce) kèm icon bay vào giỏ.
-- **Cart Drawer:** Trượt vào mượt mà từ cạnh phải (Desktop) hoặc trượt từ dưới lên (Mobile) với nền mờ thủy tinh (Backdrop Blur / Glassmorphism).
-- **Payment QR Modal:** Đếm ngược thời gian thanh toán thời gian thực, quét sóng xung quanh mã QR, hiệu ứng pháo hoa / checkmark xanh lục khi thanh toán thành công.
-
----
-
-## 4. CÁC TRANG VÀ TÍNH NĂNG CHÍNH (SITEMAP & USER FLOW)
-
-1. **Trang Chủ (Landing / Home):**
-   - Hero Banner với nghệ thuật chữ và visual chủ đạo.
-   - Triết lý hương / Câu chuyện thương hiệu ("Vẹn Sắc - Toàn Hương").
-   - Bộ sưu tập tiêu biểu (Featured Collections) với chuyển động cuộn ngang (Horizontal scroll).
-   - Đánh giá từ khách hàng & Báo chí / Nghệ nhân.
-2. **Trang Danh mục & Chi tiết sản phẩm (Catalog & Product Detail):**
-   - Bộ lọc hương (Nốt hương đầu, nốt giữa, nốt cuối / Tâm trạng / Không gian).
-   - Thư viện ảnh sản phẩm độ phân giải cao kèm kính lúp phóng to (Zoom viewer).
-   - Nút **"Mua ngay" (Express Checkout)** nhảy thẳng tới bước thanh toán QR.
-3. **Giỏ hàng & Cổng thanh toán nhanh (Quick Checkout):**
-   - Điền thông tin giao hàng siêu rút gọn (Họ tên, SĐT, Địa chỉ).
-   - Phương thức thanh toán: **Chuyển khoản QR Napas 24/7 (PayOS)** và **COD (Thanh toán khi nhận hàng)**.
-   - Màn hình hiển thị mã QR VietQR động kèm hướng dẫn thanh toán.
-4. **Trang Thông báo Đơn hàng (Order Success / Tracking):**
-   - Trạng thái trực tiếp của đơn hàng và mã vận đơn.
-
----
-
-## 5. LỘ TRÌNH TRIỂN KHAI THEO TỪNG GIAI ĐOẠN (ROADMAP)
+## 5. LỘ TRÌNH TRIỂN KHAI THEO TỪNG GIAI ĐOẠN
 
 ```mermaid
 flowchart TD
-    G1["Giai đoạn 1: Thiết lập nền móng dự án (Setup & Architecture)"]
-    G2["Giai đoạn 2: Xây dựng UI Component & Trang mẫu (FrontEnd Core)"]
-    G3["Giai đoạn 3: Xây dựng API & Tích hợp Cổng thanh toán PayOS (BackEnd)"]
-    G4["Giai đoạn 4: Tối ưu UI/UX Responsive & Hiệu ứng Animation"]
-    G5["Giai đoạn 5: Kiểm thử hoàn chỉnh & Deploy Public"]
+    G1["✅ Giai đoạn 1: Thiết lập nền móng dự án (HOÀN THÀNH)"]
+    G2["Giai đoạn 2: Tích hợp Cloud Database (MongoDB Atlas) & Seed dữ liệu"]
+    G3["Giai đoạn 3: Hoàn thiện Guest Checkout & Cổng thanh toán PayOS"]
+    G4["Giai đoạn 4: Tối ưu UI/UX Responsive, Tra cứu đơn hàng & Animation 60fps"]
+    G5["Giai đoạn 5: Deploy Public hoàn chỉnh (Vercel + Render + Cloud DB)"]
 
     G1 --> G2
     G2 --> G3
@@ -129,33 +170,28 @@ flowchart TD
     G4 --> G5
 ```
 
-### Chi tiết từng giai đoạn:
+### Chi tiết các bước thực hiện tiếp theo:
 
-#### 🔹 Giai đoạn 1: Khởi tạo Kiến trúc & Môi trường (Ngày 1)
-- Thiết lập FrontEnd (`Vite + React + Tailwind CSS + Framer Motion` hoặc `Next.js`).
-- Thiết lập BackEnd (`Node.js Express + TypeScript + CORS + dotenv`).
-- Thiết lập cấu trúc thư mục chuẩn cho cả 2 bên.
+#### 🔹 Giai đoạn 2: Kết nối Cloud Database (MongoDB Atlas)
+1. Cài đặt `mongoose` trong `BackEnd`.
+2. Tạo file kết nối `src/config/database.ts` với cơ chế tự động kết nối lại (Auto-reconnect) và Fallback an toàn.
+3. Tạo Mongoose Models cho `Product` và `Order`.
+4. Viết script Seed dữ liệu các tác phẩm hương thơm độc bản vào Cloud Database.
+5. Cung cấp API Tra cứu đơn hàng theo Số điện thoại cho khách: `GET /api/orders/lookup?phone=0987654321`.
 
-#### 🔹 Giai đoạn 2: Thiết kế Giao diện Thẩm mỹ cao (Ngày 2 - 3)
-- Tạo Theme màu sắc sang trọng (Dark Charcoal `#121212`, Vàng ánh kim Warm Gold `#D4AF37`, Giấy cổ Muted Cream `#F7F5F0`).
-- Xây dựng Layout Responsive (Header navigation, Mobile menu, Footer).
-- Xây dựng Hero Section chuyển động mượt, Product Card, Cart Drawer.
+#### 🔹 Giai đoạn 3: Hoàn thiện Cổng thanh toán PayOS & Webhook
+1. Đăng ký tài khoản PayOS miễn phí tại [my.payos.vn](https://my.payos.vn) để lấy Client ID, API Key, Checksum Key.
+2. Cấu hình Webhook PayOS tự động cập nhật trạng thái đơn hàng trong Cloud Database sang `PAID`.
+3. Kiểm thử luồng quét QR thực tế và luồng giả lập 1-click.
 
-#### 🔹 Giai đoạn 3: Phát triển BackEnd & Cổng thanh toán PayOS (Ngày 3 - 4)
-- Viết API lấy danh sách sản phẩm và chi tiết sản phẩm.
-- Đăng ký và cấu hình API Key của PayOS.
-- Viết API `POST /api/payment/create-qr`: Gọi PayOS tạo Payment Link / QR code.
-- Viết API `POST /api/payment/webhook`: Nhận phản hồi thanh toán thành công và cập nhật trạng thái đơn hàng.
+#### 🔹 Giai đoạn 4: Hoàn thiện UI/UX & Responsive đa màn hình
+1. Thiết kế trang hoặc Drawer "Tra cứu đơn hàng" nhanh bằng Số điện thoại (dành cho khách không cần đăng nhập).
+2. Tối ưu chuyển động mượt mà trên iPhone, Android và Desktop màn hình rộng.
+3. Bổ sung hiệu ứng chúc mừng và âm thanh thông báo nhẹ nhàng khi thanh toán thành công.
 
-#### 🔹 Giai đoạn 4: Hoàn thiện Animation, Responsive & Trải nghiệm (Ngày 4 - 5)
-- Thêm hiệu ứng chuyển trang, toast notification thông báo, đếm ngược QR.
-- Kiểm tra hiển thị chuẩn xác trên iPhone, iPad, Android, Laptop và Màn hình Ultra-wide.
-- Tối ưu hiệu năng nạp ảnh và kích thước bundle (Lighthouse Score > 90).
-
-#### 🔹 Giai đoạn 5: Deploy Public & Bàn giao (Ngày 6)
-- Đưa mã nguồn lên GitHub.
-- Deploy FrontEnd lên **Vercel** (miễn phí, có link public dạng `tensacvenhuong.vercel.app` hoặc trỏ domain riêng).
-- Deploy BackEnd lên **Render** (miễn phí).
-- Cấu hình Webhook PayOS trỏ vào URL public của BackEnd.
-- Kiểm thử luồng quét QR thanh toán thực tế với số tiền nhỏ (ví dụ 2.000 VNĐ).
-
+#### 🔹 Giai đoạn 5: Triển khai Public (Deploy)
+1. Đẩy mã nguồn lên GitHub.
+2. Deploy FrontEnd lên **Vercel** (miễn phí, có SSL tự động).
+3. Deploy BackEnd lên **Render.com** (miễn phí).
+4. Kết nối biến môi trường `MONGODB_URI` và PayOS Keys trên Render.
+5. Kiểm thử toàn bộ hệ thống trên đường link public thực tế.
