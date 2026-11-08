@@ -1,0 +1,11 @@
+{
+  "name": "tan-sac-ven-huong",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "cd FrontEnd && npm run dev",
+    "dev:backend": "cd BackEnd && npm run dev",
+    "build:frontend": "cd FrontEnd && npm run build",
+    "build:backend": "cd BackEnd && npm run build"
+  }
+}
