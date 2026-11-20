@@ -24,11 +24,26 @@ export function OrderLookupPage() {
   };
   return <CommerceShell eyebrow="HỖ TRỢ KHÁCH HÀNG" title="Tra cứu đơn hàng">
     <section className="commerce-card commerce-lookup">
-      <p>Nhập số điện thoại đã dùng khi đặt hàng để xem trạng thái đơn.</p>
-      <form onSubmit={submit}><label htmlFor="lookup-phone">Số điện thoại</label><div><input id="lookup-phone" type="tel" required placeholder="0901234567" value={phone} onChange={event => setPhone(event.target.value)} /><button disabled={busy}>{busy ? <LoaderCircle className="animate-spin" /> : <Search />} Tra cứu</button></div></form>
+      <p>Nhập số điện thoại hoặc mã đơn hàng đã dùng khi đặt hàng để xem trạng thái đơn.</p>
+      <form onSubmit={submit}>
+        <label htmlFor="lookup-phone">Số điện thoại hoặc Mã đơn hàng</label>
+        <div>
+          <input
+            id="lookup-phone"
+            type="text"
+            required
+            placeholder="Ví dụ: 0901234567 hoặc #12345678"
+            value={phone}
+            onChange={event => setPhone(event.target.value)}
+          />
+          <button disabled={busy}>
+            {busy ? <LoaderCircle className="animate-spin" /> : <Search />} Tra cứu
+          </button>
+        </div>
+      </form>
       {error && <p className="commerce-error" role="alert">{error}</p>}
-      {orders && (orders.length === 0 ? <p className="commerce-empty">Chưa tìm thấy đơn hàng theo số điện thoại này.</p> : <div className="commerce-order-list">{orders.map(order => <article key={order.orderCode}><div><span>MÃ ĐƠN</span><strong>#{order.orderCode}</strong></div><div><span>NGÀY ĐẶT</span><strong>{new Date(order.createdAt).toLocaleDateString('vi-VN')}</strong></div><div><span>TỔNG TIỀN</span><strong>{money(order.totalAmount)}</strong></div><div><span>TRẠNG THÁI</span><strong className={`status-${order.status.toLowerCase()}`}>{order.status === 'PAID' ? 'Đã thanh toán' : order.status === 'CANCELLED' ? 'Đã hủy' : 'Đang xử lý'}</strong></div></article>)}</div>)}
-      <small>Trang tra cứu không hiển thị địa chỉ hoặc ghi chú giao nhận.</small>
+      {orders && (orders.length === 0 ? <p className="commerce-empty">Chưa tìm thấy đơn hàng theo thông tin tra cứu này.</p> : <div className="commerce-order-list">{orders.map(order => <article key={order.orderCode}><div><span>MÃ ĐƠN</span><strong>#{order.orderCode}</strong></div><div><span>NGÀY ĐẶT</span><strong>{new Date(order.createdAt).toLocaleDateString('vi-VN')}</strong></div><div><span>TỔNG TIỀN</span><strong>{money(order.totalAmount)}</strong></div><div><span>TRẠNG THÁI</span><strong className={`status-${order.status.toLowerCase()}`}>{order.status === 'PAID' ? 'Đã thanh toán' : order.status === 'CANCELLED' ? 'Đã hủy' : 'Đang xử lý'}</strong></div></article>)}</div>)}
+      <small>Trang tra cứu bảo mật: không hiển thị địa chỉ nhà riêng hoặc ghi chú giao nhận.</small>
     </section>
   </CommerceShell>;
 }

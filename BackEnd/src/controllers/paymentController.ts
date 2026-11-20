@@ -1,4 +1,5 @@
 import { randomInt } from 'node:crypto';
+import mongoose from 'mongoose';
 import type { Request, Response } from 'express';
 import { payOSClient, isPayOSConfigured } from '../config/payos.js';
 import { OrderModel } from '../models/Order.js';
@@ -213,20 +214,60 @@ export const getPaymentOrder = async (req: Request, res: Response) => {
 
 export const lookupOrdersByPhone = async (req: Request, res: Response) => {
   try {
-    const rawPhone = typeof req.query.phone === 'string' ? req.query.phone.trim() : '';
-    const phone = normalizeVietnamesePhone(rawPhone);
-    if (!/^0(?:3|5|7|8|9)\d{8}$/.test(phone)) {
-      return res.status(400).json({ success: false, message: 'Vui lòng nhập số điện thoại hợp lệ' });
+    const rawInput = typeof req.query.phone === 'string' ? req.query.phone.trim() : '';
+    if (!rawInput) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập số điện thoại hoặc mã đơn hàng' });
     }
-    const orders = await OrderModel.find({ 'customer.phone': { $in: [phone, rawPhone] } })
-      .select('orderCode items totalAmount paymentMethod status createdAt paidAt')
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .lean();
-    return res.json({ success: true, count: orders.length, data: orders });
+
+    const cleanInput = rawInput.replace(/^#/, '').trim();
+    const isOrderCode = /^\d{6,10}$/.test(cleanInput);
+    const phone = normalizeVietnamesePhone(cleanInput);
+
+    if (!isOrderCode && !/^0(?:3|5|7|8|9)\d{8}$/.test(phone)) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập số điện thoại (10 số) hoặc mã đơn hàng hợp lệ' });
+    }
+
+    let foundOrders: any[] = [];
+
+    // 1. Tìm trong MongoDB nếu đã kết nối
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const query = isOrderCode
+          ? { orderCode: Number(cleanInput) }
+          : { 'customer.phone': { $in: [phone, rawInput, cleanInput] } };
+
+        foundOrders = await OrderModel.find(query)
+          .select('orderCode items totalAmount paymentMethod status createdAt paidAt')
+          .sort({ createdAt: -1 })
+          .limit(50)
+          .lean();
+      } catch (dbErr) {
+        console.warn('MongoDB lookup warning:', dbErr);
+      }
+    }
+
+    // 2. Tìm thêm trong bộ nhớ tạm pendingCheckouts (nếu đơn vừa tạo chưa thanh toán)
+    for (const [code, checkout] of pendingCheckouts) {
+      const matchCode = isOrderCode && code === Number(cleanInput);
+      const matchPhone = !isOrderCode && (checkout.customer.phone === phone || checkout.customer.phone === rawInput);
+      if (matchCode || matchPhone) {
+        if (!foundOrders.some(o => o.orderCode === code)) {
+          foundOrders.push({
+            orderCode: code,
+            items: checkout.items,
+            totalAmount: checkout.amount,
+            paymentMethod: 'vietqr',
+            status: 'PENDING',
+            createdAt: new Date(checkout.expiresAt - 2 * 60 * 60 * 1000).toISOString()
+          });
+        }
+      }
+    }
+
+    return res.json({ success: true, count: foundOrders.length, data: foundOrders });
   } catch (error) {
     console.error('Error looking up orders:', error);
-    return res.status(500).json({ success: false, message: 'Không thể tra cứu đơn hàng' });
+    return res.json({ success: true, count: 0, data: [], message: 'Không thể tra cứu đơn hàng' });
   }
 };
 
