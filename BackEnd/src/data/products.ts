@@ -16,5 +16,37 @@ export const products: Product[] = [
     inStock: true,
     rating: 5,
     reviewsCount: 0
+  },
+  {
+    id: 'tuy-loan-banh-trang-hop-10-cai',
+    name: 'Hộp Bánh Tráng Túy Loan Thượng Hạng (10 cái)',
+    subtitle: 'Đặc sản biếu tặng truyền thống',
+    category: 'dac-san',
+    price: 230000,
+    volume: 'Hộp 10 cái',
+    description: 'Bánh tráng dày mè đường kính lớn, tráng tay thủ công phơi sấy truyền thống.',
+    story: 'Món quà trang trọng gửi trọn hương vị tình quê Đà Nẵng.',
+    notes: { top: [], middle: [], base: [] },
+    image: '/products/tuy-loan-rice-paper.png',
+    badge: 'Bán chạy',
+    inStock: true,
+    rating: 5,
+    reviewsCount: 0
+  },
+  {
+    id: 'tuy-loan-combo-dac-san-que',
+    name: 'Combo Quà Tặng Làng Nghề Túy Loan',
+    subtitle: 'Bánh tráng nướng & quà quê đậm đà',
+    category: 'dac-san',
+    price: 350000,
+    volume: 'Combo gia đình',
+    description: 'Bộ sản phẩm tuyển chọn từ các nghệ nhân lâu năm làng cổ Túy Loan.',
+    story: 'Lan tỏa tinh hoa văn hóa ẩm thực xứ Quảng.',
+    notes: { top: [], middle: [], base: [] },
+    image: '/products/tuy-loan-rice-paper.png',
+    badge: 'Cao cấp',
+    inStock: true,
+    rating: 5,
+    reviewsCount: 0
   }
 ];

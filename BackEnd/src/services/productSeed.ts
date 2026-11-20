@@ -15,6 +15,7 @@ export async function seedProducts(): Promise<number> {
 }
 
 export async function seedProductsIfEmpty(): Promise<number> {
-  if (await ProductModel.exists({})) return 0;
+  const count = await ProductModel.countDocuments();
+  if (count >= products.length) return 0;
   return seedProducts();
 }
