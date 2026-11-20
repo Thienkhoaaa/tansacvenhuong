@@ -1,145 +1,168 @@
-# 🌐 HƯỚNG DẪN TRIỂN KHAI PUBLIC & TRỎ TÊN MIỀN RIÊNG
-
-Tài liệu này hướng dẫn chi tiết từng bước để đưa website **Tàn Sắc Vẹn Hương** lên môi trường Internet công khai (Public) và kết nối với **Tên miền riêng** bạn đã mua, hoàn toàn miễn phí chi phí duy trì máy chủ (Free Tier 100%).
+# 🌐 HƯỚNG DẪN TRIỂN KHAI PRODUCTION: TÀN SẮC VẸN HƯƠNG
+### Tên miền: `tansacvenhuong.site` | Máy chủ: CloudFly VPS + Vercel Global CDN
 
 ---
 
-## 🏗️ 1. MÔ HÌNH KIẾN TRÚC TRIỂN KHAI (ARCHITECTURE)
+## 🏗️ 1. MÔ HÌNH KIẾN TRÚC PRODUCTION TỐI ƯU (RECOMMENDED ARCHITECTURE)
 
 ```mermaid
 flowchart TD
-    User["Khách hàng truy cập: tansacvenhuong.site"]
-    DNS["Nhà cung cấp Tên miền (Quản lý DNS của tansacvenhuong.site)"]
-    
-    subgraph Vercel ["Vercel Global CDN (FrontEnd)"]
-        FE["React 19 + Vite SPA (SSL HTTPS tự động)"]
-        Proxy["Vercel Rewrites Proxy (/api/*)"]
-    end
-    
-    subgraph Render ["Render.com (BackEnd Service)"]
-        BE["Node.js Express TypeScript API"]
-    end
-    
-    subgraph CloudServices ["Dịch vụ Cloud"]
-        DB[(MongoDB Atlas Singapore)]
-        PayOS["PayOS VietQR Gateway"]
+    Client["Khách hàng truy cập: tansacvenhuong.site"]
+    DNS["DNS Quản lý tên miền (tansacvenhuong.site)"]
+
+    subgraph Vercel ["Vercel Global CDN (Giao diện FrontEnd)"]
+        FE["React 19 + Vite SPA (Tốc độ ánh sáng, SSL tự động)"]
     end
 
-    User --> DNS
-    DNS -->|Bản ghi A / CNAME| FE
-    FE --> Proxy
-    Proxy -->|Chuyển tiếp ngầm| BE
-    BE --> DB
-    BE --> PayOS
-    PayOS -->|Webhook thanh toán| Proxy
+    subgraph CloudFly ["Cloud Server CloudFly (220k/tháng - Hà Nội / TP.HCM)"]
+        Nginx["Nginx Reverse Proxy (SSL Let's Encrypt)"]
+        PM2["PM2 Process Manager (Cluster Mode, 24/7)"]
+        API["Node.js Express TypeScript (Port 5000)"]
+        Nginx --> API
+        PM2 --> API
+    end
+
+    subgraph CloudServices ["Dịch vụ Đám Mây"]
+        DB[(MongoDB Atlas Singapore)]
+        PayOS["PayOS VietQR Napas 24/7"]
+    end
+
+    Client --> DNS
+    DNS -->|A / CNAME: tansacvenhuong.site| FE
+    DNS -->|A record: api.tansacvenhuong.site| Nginx
+    FE -->|Gọi API| Nginx
+    API --> DB
+    API --> PayOS
+    PayOS -->|Webhook thanh toán tức thì| Nginx
 ```
 
 ---
 
-## 📋 2. CÁC BƯỚC THỰC HIỆN CHI TIẾT
+## 📋 2. BẢNG CẤU HÌNH DNS TÊN MIỀN (`tansacvenhuong.site`)
+
+Tại trang quản lý DNS nơi bạn mua tên miền, thêm **3 bản ghi** sau:
+
+| Loại (Type) | Tên / Host | Giá trị trỏ đến (Points to) | Mục đích |
+| :--- | :--- | :--- | :--- |
+| **A** | `@` | **`76.76.21.21`** | Trỏ web chính `tansacvenhuong.site` về Vercel |
+| **CNAME** | `www` | **`cname.vercel-dns.com`** | Cho phép truy cập qua `www.tansacvenhuong.site` |
+| **A** | `api` | **`IP_MÁY_CHỦ_CLOUDFLY`** | Trỏ subdomain `api.tansacvenhuong.site` về VPS |
+
+---
+
+## 🚀 3. HƯỚNG DẪN TRIỂN KHAI TỪNG BƯỚC
 
 ### BƯỚC 1: ĐƯA DỰ ÁN LÊN GITHUB
+Repository của bạn: `https://github.com/Thienkhoaaa/tansacvenhuong.git`
 
-1. Đăng nhập vào [GitHub](https://github.com/) và tạo một Repository mới (ví dụ đặt tên: `TanSacVenHuong`, để ở chế độ **Private** hoặc **Public**).
-2. Tại máy tính của bạn, mở terminal tại thư mục dự án và chạy các lệnh:
-   ```bash
-   git add .
-   git commit -m "feat: prepare production deployment with custom domain"
-   git branch -M main
-   git remote add origin https://github.com/TÊN_GITHUB_CỦA_BẠN/TanSacVenHuong.git
-   git push -u origin main
-   ```
+Chạy các lệnh sau trong terminal để đẩy toàn bộ mã nguồn lên:
+```bash
+git branch -M main
+git remote add origin https://github.com/Thienkhoaaa/tansacvenhuong.git
+git push -u origin main --force
+```
 
 ---
 
-### BƯỚC 2: DEPLOY BACKEND LÊN RENDER.COM (HOÀN TOÀN FREE)
-
-1. Truy cập [Render.com](https://render.com/) -> Đăng nhập bằng tài khoản GitHub.
-2. Nhấn nút **New +** -> Chọn **Web Service**.
-3. Chọn Repository `TanSacVenHuong` vừa tạo.
-4. Điền các thông số cấu hình:
-   - **Name:** `tansacvenhuong-api` (hoặc tên bạn thích).
-   - **Root Directory:** `BackEnd` *(bắt buộc điền)*.
-   - **Environment:** `Node`.
-   - **Build Command:** `npm install && npm run build`
-   - **Start Command:** `npm start`
-   - **Instance Type:** Chọn **Free**.
-5. Nhấn mục **Environment Variables** (Biến môi trường) và thêm các khóa:
-   - `NODE_ENV` = `production`
-   - `PORT` = `5000`
-   - `CLIENT_URL` = `https://tansacvenhuong.site,https://www.tansacvenhuong.site`
-   - `MONGODB_URI` = *(Chuỗi kết nối MongoDB Atlas của bạn)*
-   - `PAYOS_CLIENT_ID` = `b4cc8bfa-a88d-4ec4-a911-8417bd1f6b3d`
-   - `PAYOS_API_KEY` = `3ae36ada-179c-49b3-998d-bf02e7b96f83`
-   - `PAYOS_CHECKSUM_KEY` = `92c0830282bf323f1d7f0db84e3510a177b5f9574124bdc748c0593a88c9c4bf`
-6. Nhấn **Create Web Service**. Chờ 2-3 phút, Render sẽ cấp cho bạn một URL công khai có dạng:
-   👉 `https://tansacvenhuong-api.onrender.com`
-
----
-
-### BƯỚC 3: DEPLOY FRONTEND LÊN VERCEL
-
-1. Truy cập [Vercel.com](https://vercel.com/) -> Đăng nhập bằng tài khoản GitHub.
-2. Nhấn nút **Add New...** -> Chọn **Project**.
-3. Chọn Repository `TanSacVenHuong`.
-4. Điền cấu hình:
-   - **Project Name:** `tansacvenhuong`
+### BƯỚC 2: DEPLOY FRONTEND LÊN VERCEL (MIỄN PHÍ)
+1. Đăng nhập [Vercel.com](https://vercel.com/) $\rightarrow$ Chọn **Add New...** $\rightarrow$ **Project**.
+2. Chọn repo `Thienkhoaaa/tansacvenhuong`.
+3. Điền cấu hình:
    - **Framework Preset:** `Vite`
-   - **Root Directory:** Nhấn Edit -> Chọn thư mục `FrontEnd` *(bắt buộc)*.
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-5. Cập nhật file `FrontEnd/vercel.json` để trỏ API sang Render:
-   ```json
-   {
-     "rewrites": [
-       {
-         "source": "/api/(.*)",
-         "destination": "https://tansacvenhuong-api.onrender.com/api/$1"
-       },
-       {
-         "source": "/(.*)",
-         "destination": "/index.html"
-       }
-     ]
-   }
-   ```
-   *(Thay `tansacvenhuong-api.onrender.com` bằng URL Render của bạn).*
-6. Nhấn **Deploy**. Chỉ mất khoảng 30 giây, website của bạn đã online!
+   - **Root Directory:** Bấm Edit $\rightarrow$ Chọn thư mục `FrontEnd`.
+4. Mục **Environment Variables** (Biến môi trường):
+   - `VITE_API_URL` = `https://api.tansacvenhuong.site` *(hoặc `http://IP_CLOUDFLY:5000` nếu chưa trỏ subdomain)*.
+5. Nhấn **Deploy**.
+6. Sau khi deploy xong: Vào tab **Settings** $\rightarrow$ **Domains** $\rightarrow$ Nhập `tansacvenhuong.site` và nhấn **Add**.
 
 ---
 
-### BƯỚC 4: CẤU HÌNH TRỎ TÊN MIỀN RIÊNG (DNS SETUP)
+### BƯỚC 3: CÀI ĐẶT BACKEND TRÊN CLOUDFLY VPS (220k/tháng)
 
-Sau khi deploy FrontEnd trên Vercel:
-1. Vào dự án của bạn trên Vercel -> Chọn tab **Settings** -> Mục **Domains**.
-2. Nhập tên miền bạn đã mua: `tansacvenhuong.site` -> Nhấn **Add**.
-3. Vercel sẽ tự động đề xuất thêm cả `www.tansacvenhuong.site` -> Chọn **Recommended** (redirect `www` về root hoặc ngược lại).
-4. Vercel sẽ hiển thị bảng giá trị DNS cần cấu hình. Bạn mở trang quản lý tên miền `tansacvenhuong.site` và thêm 2 bản ghi sau:
+Khi bạn nhận máy chủ CloudFly (chạy hệ điều hành Ubuntu 22.04 hoặc 24.04 LTS), mở terminal SSH vào VPS:
+```bash
+ssh root@IP_MÁY_CHỦ_CLOUDFLY
+```
 
-| Loại bản ghi (Type) | Tên / Host (Name) | Giá trị (Value / Points to) | TTL |
-| :--- | :--- | :--- | :--- |
-| **A** | `@` *(hoặc để trống tùy nhà cung cấp)* | `76.76.21.21` | 3600 (hoặc Mặc định) |
-| **CNAME** | `www` | `cname.vercel-dns.com` | 3600 (hoặc Mặc định) |
+Thực hiện các lệnh sau:
 
-> [!NOTE]
-> Sau khi lưu DNS, thường mất từ **5 đến 30 phút** (tối đa vài giờ) để tên miền lan tỏa trên toàn thế giới. Vercel sẽ tự động cấp chứng chỉ bảo mật **SSL (HTTPS có ổ khóa xanh)** hoàn toàn miễn phí.
+#### 1. Cài đặt Node.js 22 & PM2 & Nginx:
+```bash
+# Cập nhật hệ thống
+sudo apt update && sudo apt upgrade -y
+
+# Cài đặt Node.js 22 LTS
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs git nginx
+
+# Cài đặt PM2 (quản lý chạy ngầm 24/7)
+sudo npm install -g pm2
+```
+
+#### 2. Kéo mã nguồn về VPS:
+```bash
+cd /var/www
+git clone https://github.com/Thienkhoaaa/tansacvenhuong.git
+cd tansacvenhuong/BackEnd
+```
+
+#### 3. Tạo file cấu hình môi trường `.env`:
+```bash
+nano .env
+```
+Dán nội dung cấu hình thực tế vào:
+```env
+PORT=5000
+NODE_ENV=production
+CLIENT_URL=https://tansacvenhuong.site,https://www.tansacvenhuong.site
+
+# MongoDB Atlas
+MONGODB_URI=mongodb+srv://nguyenthienkhoa15_db_user:XwD7gLMhO5DSp1Sk@cluster0.l8eu0hw.mongodb.net/tan-sac-ven-huong?retryWrites=true&w=majority
+
+# PayOS VietQR
+PAYOS_CLIENT_ID=b4cc8bfa-a88d-4ec4-a911-8417bd1f6b3d
+PAYOS_API_KEY=3ae36ada-179c-49b3-998d-bf02e7b96f83
+PAYOS_CHECKSUM_KEY=92c0830282bf323f1d7f0db84e3510a177b5f9574124bdc748c0593a88c9c4bf
+```
+*(Bấm `Ctrl + O` để lưu, `Enter`, rồi `Ctrl + X` để thoát).*
+
+#### 4. Cài đặt, build và khởi chạy với PM2:
+```bash
+npm install
+npm run build
+pm2 start ecosystem.config.cjs
+pm2 save
+pm2 startup
+```
+
+#### 5. Cấu hình Nginx làm Reverse Proxy & cấp SSL miễn phí:
+```bash
+# Copy cấu hình Nginx mẫu
+sudo cp nginx.conf.example /etc/nginx/sites-available/tansacvenhuong-api
+sudo ln -s /etc/nginx/sites-available/tansacvenhuong-api /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+
+# Cài đặt chứng chỉ SSL HTTPS miễn phí (Certbot)
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d api.tansacvenhuong.site
+```
 
 ---
 
-### BƯỚC 5: CẬP NHẬT WEBHOOK TRÊN CỔNG PAYOS
+### BƯỚC 4: CẬP NHẬT WEBHOOK TRÊN CỔNG PAYOS
 
-1. Đăng nhập vào trang quản trị PayOS: [https://my.payos.vn/](https://my.payos.vn/).
-2. Chọn kênh thanh toán của bạn -> Mục **Cài đặt Webhook**.
-3. Điền đường link Webhook chính thức:
-   👉 `https://tansacvenhuong.site/api/payment/webhook`
-4. Nhấn **Lưu Webhook** và nhấn **Kiểm tra kết nối**. Khi PayOS báo "Kết nối thành công" là hoàn tất 100%!
+1. Đăng nhập [https://my.payos.vn/](https://my.payos.vn/).
+2. Chọn kênh thanh toán của bạn $\rightarrow$ Mục **Cài đặt Webhook**.
+3. Điền URL:
+   👉 `https://api.tansacvenhuong.site/api/payment/webhook`
+4. Nhấn **Lưu** và nhấn **Kiểm tra kết nối**.
 
 ---
 
-## 🎯 3. DANH SÁCH KIỂM TRA TRƯỚC KHI BÀN GIAO (CHECKLIST)
-
-- [x] FrontEnd build thành công (`npm run build`).
-- [x] BackEnd TypeScript compile thành công (`tsc`).
-- [x] File cấu hình điều hướng `FrontEnd/vercel.json` đã sẵn sàng.
-- [x] Hệ thống CORS trên BackEnd đã mở rộng hỗ trợ tên miền tùy biến.
-- [ ] Bạn cung cấp tên miền cụ thể để tôi hỗ trợ kiểm tra chi tiết cấu hình DNS.
+## 🔄 4. CÁCH CẬP NHẬT MÃ NGUỒN SAU NÀY
+Khi bạn có code mới đẩy lên GitHub, bạn chỉ cần SSH vào VPS và chạy file có sẵn:
+```bash
+cd /var/www/tansacvenhuong/BackEnd
+bash deploy.sh
+```
+Mã nguồn sẽ tự động được kéo về, build lại và khởi động lại trong 5 giây mà không làm gián đoạn khách hàng!

@@ -3,6 +3,8 @@ import type {
   CreatePaymentLinkPayload, PaymentLinkResponse, PaymentOrderStatus
 } from '../types/index.js';
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
 // Fallback initial products if backend is not started
 const FALLBACK_PRODUCTS: Product[] = [
   {
@@ -25,7 +27,7 @@ const FALLBACK_PRODUCTS: Product[] = [
 
 export async function fetchProducts(): Promise<Product[]> {
   try {
-    const res = await fetch('/api/products');
+    const res = await fetch(`${API_BASE_URL}/api/products`);
     if (!res.ok) throw new Error('API request failed');
     const data = await res.json();
     return data.data;
@@ -35,14 +37,14 @@ export async function fetchProducts(): Promise<Product[]> {
 }
 
 export async function fetchCheckoutProducts(): Promise<Product[]> {
-  const res = await fetch('/api/products');
+  const res = await fetch(`${API_BASE_URL}/api/products`);
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Không thể tải sản phẩm từ MongoDB');
   return data.data as Product[];
 }
 
 export async function createPaymentLink(payload: CreatePaymentLinkPayload): Promise<PaymentLinkResponse> {
-  const res = await fetch('/api/payment/create-payment-link', {
+  const res = await fetch(`${API_BASE_URL}/api/payment/create-payment-link`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -53,7 +55,7 @@ export async function createPaymentLink(payload: CreatePaymentLinkPayload): Prom
 }
 
 export async function fetchPaymentOrderStatus(orderCode: number): Promise<PaymentOrderStatus> {
-  const res = await fetch(`/api/payment/order/${orderCode}`);
+  const res = await fetch(`${API_BASE_URL}/api/payment/order/${orderCode}`);
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Không thể kiểm tra trạng thái đơn hàng');
   return data.order as PaymentOrderStatus;
@@ -70,7 +72,7 @@ export async function createOrder(payload: CreateOrderPayload): Promise<{
   };
   message?: string;
 }> {
-  const res = await fetch('/api/payment/create-order', {
+  const res = await fetch(`${API_BASE_URL}/api/payment/create-order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -82,7 +84,7 @@ export async function createOrder(payload: CreateOrderPayload): Promise<{
 
 export async function checkOrderStatus(orderCode: number): Promise<OrderRecord | null> {
   try {
-    const res = await fetch(`/api/payment/order-status/${orderCode}`);
+    const res = await fetch(`${API_BASE_URL}/api/payment/order-status/${orderCode}`);
     if (!res.ok) return null;
     const data = await res.json();
     return data.order;
@@ -92,7 +94,7 @@ export async function checkOrderStatus(orderCode: number): Promise<OrderRecord |
 }
 
 export async function lookupOrdersByPhone(phone: string): Promise<OrderLookupRecord[]> {
-  const res = await fetch(`/api/payment/lookup-orders?phone=${encodeURIComponent(phone)}`);
+  const res = await fetch(`${API_BASE_URL}/api/payment/lookup-orders?phone=${encodeURIComponent(phone)}`);
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Không thể tra cứu đơn hàng');
   return data.data;
@@ -100,7 +102,7 @@ export async function lookupOrdersByPhone(phone: string): Promise<OrderLookupRec
 
 export async function simulateSuccess(orderCode: number): Promise<boolean> {
   try {
-    const res = await fetch(`/api/payment/simulate-success/${orderCode}`, {
+    const res = await fetch(`${API_BASE_URL}/api/payment/simulate-success/${orderCode}`, {
       method: 'POST'
     });
     return res.ok;
