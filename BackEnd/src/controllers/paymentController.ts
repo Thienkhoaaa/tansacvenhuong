@@ -22,6 +22,15 @@ async function acceptPaidCheckout(orderCode: number, paidAmount: number, payment
   const existingOrder = await OrderModel.findOne({ orderCode });
   if (existingOrder?.status === 'PAID') return true;
 
+  if (existingOrder) {
+    existingOrder.status = 'PAID';
+    existingOrder.paidAt = new Date().toISOString();
+    if (paymentLinkId) existingOrder.payosPaymentLinkId = paymentLinkId;
+    await existingOrder.save();
+    pendingCheckouts.delete(orderCode);
+    return true;
+  }
+
   const pending = pendingCheckouts.get(orderCode);
   if (!pending || pending.expiresAt < Date.now() || pending.amount !== paidAmount || pending.paymentLinkId !== paymentLinkId) {
     return false;
@@ -143,6 +152,29 @@ export const createPaymentLink = async (req: Request, res: Response) => {
       expiresAt: Date.now() + 2 * 60 * 60 * 1000
     });
 
+    // Lưu đơn hàng vào MongoDB ở trạng thái PENDING để các cluster PM2 và chức năng tra cứu luôn đồng bộ
+    try {
+      await OrderModel.create({
+        orderCode,
+        customer: {
+          name: customerInfo.fullName.trim(),
+          phone,
+          address: customerInfo.address.trim(),
+          notes: typeof customerInfo.note === 'string' ? customerInfo.note.trim() : undefined
+        },
+        items: orderItems,
+        totalAmount: amount,
+        paymentMethod: 'vietqr',
+        status: 'PENDING',
+        payosPaymentLinkId: paymentLink.paymentLinkId,
+        isTestMode,
+        checkoutUrl: paymentLink.checkoutUrl,
+        qrCodeUrl: paymentLink.qrCode
+      });
+    } catch (saveErr) {
+      console.warn('Could not pre-save pending order in MongoDB (falling back to memory):', saveErr);
+    }
+
     return res.status(201).json({
       success: true,
       order: { orderCode, status: 'PENDING' },
@@ -183,28 +215,32 @@ export const getPaymentOrder = async (req: Request, res: Response) => {
     let order = await OrderModel.findOne({ orderCode })
       .select('orderCode totalAmount paymentMethod status createdAt paidAt isTestMode')
       .lean();
-    if (!order) {
-      const pending = pendingCheckouts.get(orderCode);
-      if (!pending || pending.expiresAt < Date.now()) {
-        pendingCheckouts.delete(orderCode);
-        return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
-      }
+
+    // Nếu đơn chưa thanh toán hoặc chưa có, kiểm tra PayOS
+    if (!order || order.status !== 'PAID') {
       if (payOSClient) {
         try {
           const paymentInfo = await payOSClient.getPaymentLinkInformation(orderCode);
-          if (paymentInfo.status === 'PAID' && paymentInfo.amountPaid >= pending.amount) {
+          if (paymentInfo.status === 'PAID') {
             await acceptPaidCheckout(orderCode, paymentInfo.amountPaid, paymentInfo.id);
             order = await OrderModel.findOne({ orderCode })
               .select('orderCode totalAmount paymentMethod status createdAt paidAt isTestMode')
               .lean();
           }
         } catch (error) {
-          console.error('PayOS payment status polling failed:', error);
+          // PayOS polling check
         }
       }
-      if (!order) return res.json({ success: true, order: { orderCode, totalAmount: pending.amount, paymentMethod: 'vietqr', status: 'PENDING', isTestMode: pending.isTestMode } });
     }
-    if (!order) return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
+
+    if (!order) {
+      const pending = pendingCheckouts.get(orderCode);
+      if (pending && pending.expiresAt >= Date.now()) {
+        return res.json({ success: true, order: { orderCode, totalAmount: pending.amount, paymentMethod: 'vietqr', status: 'PENDING', isTestMode: pending.isTestMode } });
+      }
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
+    }
+
     return res.json({ success: true, order });
   } catch (error) {
     console.error('Error fetching payment order:', error);
