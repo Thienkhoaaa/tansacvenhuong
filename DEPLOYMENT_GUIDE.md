@@ -8,8 +8,8 @@ Tài liệu này hướng dẫn chi tiết từng bước để đưa website **
 
 ```mermaid
 flowchart TD
-    User["Khách hàng truy cập: yourdomain.com"]
-    DNS["Nhà cung cấp Tên miền (Tenten / iNET / Mắt Bão / Cloudflare...)"]
+    User["Khách hàng truy cập: tansacvenhuong.site"]
+    DNS["Nhà cung cấp Tên miền (Quản lý DNS của tansacvenhuong.site)"]
     
     subgraph Vercel ["Vercel Global CDN (FrontEnd)"]
         FE["React 19 + Vite SPA (SSL HTTPS tự động)"]
@@ -67,11 +67,11 @@ flowchart TD
 5. Nhấn mục **Environment Variables** (Biến môi trường) và thêm các khóa:
    - `NODE_ENV` = `production`
    - `PORT` = `5000`
-   - `CLIENT_URL` = `https://TÊN_MIỀN_CỦA_BẠN,https://www.TÊN_MIỀN_CỦA_BẠN`
+   - `CLIENT_URL` = `https://tansacvenhuong.site,https://www.tansacvenhuong.site`
    - `MONGODB_URI` = *(Chuỗi kết nối MongoDB Atlas của bạn)*
-   - `PAYOS_CLIENT_ID` = *(Lấy từ my.payos.vn)*
-   - `PAYOS_API_KEY` = *(Lấy từ my.payos.vn)*
-   - `PAYOS_CHECKSUM_KEY` = *(Lấy từ my.payos.vn)*
+   - `PAYOS_CLIENT_ID` = `b4cc8bfa-a88d-4ec4-a911-8417bd1f6b3d`
+   - `PAYOS_API_KEY` = `3ae36ada-179c-49b3-998d-bf02e7b96f83`
+   - `PAYOS_CHECKSUM_KEY` = `92c0830282bf323f1d7f0db84e3510a177b5f9574124bdc748c0593a88c9c4bf`
 6. Nhấn **Create Web Service**. Chờ 2-3 phút, Render sẽ cấp cho bạn một URL công khai có dạng:
    👉 `https://tansacvenhuong-api.onrender.com`
 
@@ -112,9 +112,9 @@ flowchart TD
 
 Sau khi deploy FrontEnd trên Vercel:
 1. Vào dự án của bạn trên Vercel -> Chọn tab **Settings** -> Mục **Domains**.
-2. Nhập tên miền bạn đã mua (ví dụ: `yourdomain.com`) -> Nhấn **Add**.
-3. Vercel sẽ tự động đề xuất thêm cả `www.yourdomain.com` -> Chọn **Recommended** (redirect `www` về root hoặc ngược lại).
-4. Vercel sẽ hiển thị bảng giá trị DNS cần cấu hình. Bạn mở trang quản lý tên miền (nơi bạn mua tên miền như Tenten, iNET, Mắt Bão, Cloudflare, v.v.) và thêm 2 bản ghi sau:
+2. Nhập tên miền bạn đã mua: `tansacvenhuong.site` -> Nhấn **Add**.
+3. Vercel sẽ tự động đề xuất thêm cả `www.tansacvenhuong.site` -> Chọn **Recommended** (redirect `www` về root hoặc ngược lại).
+4. Vercel sẽ hiển thị bảng giá trị DNS cần cấu hình. Bạn mở trang quản lý tên miền `tansacvenhuong.site` và thêm 2 bản ghi sau:
 
 | Loại bản ghi (Type) | Tên / Host (Name) | Giá trị (Value / Points to) | TTL |
 | :--- | :--- | :--- | :--- |
@@ -131,7 +131,7 @@ Sau khi deploy FrontEnd trên Vercel:
 1. Đăng nhập vào trang quản trị PayOS: [https://my.payos.vn/](https://my.payos.vn/).
 2. Chọn kênh thanh toán của bạn -> Mục **Cài đặt Webhook**.
 3. Điền đường link Webhook chính thức:
-   👉 `https://TÊN_MIỀN_CỦA_BẠN/api/payment/webhook`
+   👉 `https://tansacvenhuong.site/api/payment/webhook`
 4. Nhấn **Lưu Webhook** và nhấn **Kiểm tra kết nối**. Khi PayOS báo "Kết nối thành công" là hoàn tất 100%!
 
 ---
