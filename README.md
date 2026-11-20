@@ -6,6 +6,7 @@
 
 ## 📖 Tài liệu dự án
 
+- **[Tài Liệu Bàn Giao & Vận Hành Bảo Trì (HANDOVER_MAINTENANCE.md)](./HANDOVER_MAINTENANCE.md)**: Tổng hợp thông số máy chủ, cơ sở dữ liệu, lệnh bảo trì 1-click và hướng dẫn xử lý sự cố.
 - **[Hướng Dẫn Triển Khai Public & Tên Miền (DEPLOYMENT_GUIDE.md)](./DEPLOYMENT_GUIDE.md)**: Chi tiết cách deploy Vercel + Render + cấu hình DNS tên miền riêng và Webhook PayOS.
 - **[Bản Kế Hoạch Tổng Thể (PROJECT_PLAN.md)](./PROJECT_PLAN.md)**: Chi tiết kiến trúc, lộ trình 5 giai đoạn, giải pháp thanh toán miễn phí và kế hoạch deploy.
 - **[Bối Cảnh & Tiêu Chuẩn Dự Án (CONTEXT.md)](./CONTEXT.md)**: Lưu trữ context, bảng màu nhận diện, nguyên tắc responsive, hiệu ứng animation và cấu hình PayOS.
