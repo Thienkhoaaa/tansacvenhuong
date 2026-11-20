@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import productRoutes from './routes/productRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import { isPayOSConfigured } from './config/payos.js';
@@ -63,8 +64,10 @@ app.listen(PORT, () => {
 void (async () => {
   try {
     await connectDatabase();
-    const seededCount = await seedProductsIfEmpty();
-    if (seededCount) console.log(`Seeded ${seededCount} initial products into MongoDB.`);
+    if (mongoose.connection.readyState === 1) {
+      const seededCount = await seedProductsIfEmpty();
+      if (seededCount) console.log(`Seeded ${seededCount} initial products into MongoDB.`);
+    }
   } catch (error) {
     console.warn('⚠️ MongoDB connection notice (running with fallback if needed):', error);
   }
