@@ -55,20 +55,18 @@ app.get('/api/health', (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/payment', paymentRoutes);
 
-async function start() {
+app.listen(PORT, () => {
+  console.log(`🌸 Tàn Sắc Vẹn Hương BackEnd is running at http://localhost:${PORT}`);
+  console.log(`💳 PayOS Status: ${isPayOSConfigured ? 'Connected' : 'Simulation Mode (Free VietQR)'}`);
+});
+
+void (async () => {
   try {
     await connectDatabase();
     const seededCount = await seedProductsIfEmpty();
     if (seededCount) console.log(`Seeded ${seededCount} initial products into MongoDB.`);
-    app.listen(PORT, () => {
-      console.log(`🌸 Tàn Sắc Vẹn Hương BackEnd is running at http://localhost:${PORT}`);
-      console.log(`💳 PayOS Status: ${isPayOSConfigured ? 'Connected' : 'Simulation Mode (Free VietQR)'}`);
-    });
   } catch (error) {
-    console.error('Backend startup failed:', error);
-    process.exit(1);
+    console.warn('⚠️ MongoDB connection notice (running with fallback if needed):', error);
   }
-}
-
-void start();
+})();
 
