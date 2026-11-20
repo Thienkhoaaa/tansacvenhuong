@@ -7,9 +7,10 @@
 
 set -e
 
-echo "🌸 [1/6] Đang cập nhật hệ thống máy chủ Ubuntu..."
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y curl git nginx certbot python3-certbot-nginx
+export DEBIAN_FRONTEND=noninteractive
+echo "🌸 [1/6] Đang cập nhật danh sách gói và cài đặt các công cụ cần thiết..."
+sudo apt update -y
+sudo apt install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" curl git nginx certbot python3-certbot-nginx
 
 echo "🌸 [2/6] Đang cài đặt Node.js 22 LTS và PM2..."
 if ! command -v node &> /dev/null; then
