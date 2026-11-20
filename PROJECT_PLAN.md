@@ -172,12 +172,14 @@ flowchart TD
 
 ### Chi tiết các bước thực hiện tiếp theo:
 
-#### 🔹 Giai đoạn 2: Kết nối Cloud Database (MongoDB Atlas)
+#### 🔹 Giai đoạn 2: Kết nối Cloud Database (MongoDB Atlas) — ĐÃ TRIỂN KHAI
 1. Cài đặt `mongoose` trong `BackEnd`.
 2. Tạo file kết nối `src/config/database.ts` với cơ chế tự động kết nối lại (Auto-reconnect) và Fallback an toàn.
 3. Tạo Mongoose Models cho `Product` và `Order`.
 4. Viết script Seed dữ liệu các tác phẩm hương thơm độc bản vào Cloud Database.
-5. Cung cấp API Tra cứu đơn hàng theo Số điện thoại cho khách: `GET /api/orders/lookup?phone=0987654321`.
+5. Cung cấp API Tra cứu đơn hàng theo Số điện thoại cho khách: `GET /api/payment/lookup-orders?phone=0987654321`.
+
+**Kết quả trong repo:** Mongoose models cho `Product` và `Order`, kết nối MongoDB bắt buộc khi backend khởi động, seed sản phẩm mẫu khi collection rỗng (kèm lệnh upsert chủ động), CRUD đọc sản phẩm từ database, lưu đơn/trạng thái PayOS trong MongoDB, tính tổng tiền phía server từ giá trong database, và API `GET /api/payment/lookup-orders?phone=...` trả về lịch sử đơn giới hạn 50 bản ghi mà không tiết lộ địa chỉ/ghi chú giao nhận.
 
 #### 🔹 Giai đoạn 3: Hoàn thiện Cổng thanh toán PayOS & Webhook
 1. Đăng ký tài khoản PayOS miễn phí tại [my.payos.vn](https://my.payos.vn) để lấy Client ID, API Key, Checksum Key.

@@ -1,3 +1,4 @@
+> **Cập nhật định hướng ngày 11/11/2026:** Người dùng đã thay đổi sản phẩm hướng đến. Home hiện chỉ sử dụng thiết kế slide 1 Canva về Túy Loan cùng ảnh làng nghề được cung cấp. Thiết kế và nội dung hương thơm/nước hoa/trầm hương trước đây không còn liên quan đến giao diện mới. Không đưa các section, giỏ hàng hay checkout cũ trở lại Home. Câu chuyện, Video và Cửa hàng chưa có thiết kế/nội dung mới nên tạm chưa hoạt động. Các phần mô tả định hướng cũ bên dưới chỉ là lịch sử dự án, không phải yêu cầu thiết kế hiện hành.
 # 📜 BỐI CẢNH DỰ ÁN (PROJECT CONTEXT) - TÀN SẮC VẸN HƯƠNG
 
 Tài liệu này lưu trữ toàn bộ thông tin bối cảnh, quyết định kiến trúc, tiêu chuẩn thiết kế và trạng thái phát triển của dự án để đảm bảo sự thống nhất cho các lập trình viên và AI Agent tham gia dự án.
@@ -94,7 +95,18 @@ d:\TanSacVenHuong\
   - [x] BackEnd: Express + TypeScript + PayOS SDK (`@payos/node`) + CORS + Dotenv. Build TypeScript thành công `dist/`.
   - [x] Thiết lập cấu trúc thư mục chuẩn cho cả 2 bên.
   - [x] Tạo sẵn hệ thống UI mẫu: Navbar, HeroSection, ProductGrid, ProductDetailModal, CartDrawer, và CheckoutModal hỗ trợ **Guest Checkout (không cần đăng nhập)** & VietQR Napas 24/7.
-- [ ] **Giai đoạn 2: Tích hợp Cloud Database (MongoDB Atlas) & API Tra cứu đơn hàng theo SĐT.**
+- [x] **Giai đoạn 2: Tích hợp Cloud Database (MongoDB Atlas) & API Tra cứu đơn hàng theo SĐT.** (Tích hợp Mongoose, model Product/Order, tự seed bộ mock nếu collection trống, lưu đơn và trạng thái thanh toán bền vững, API tra cứu đơn theo SĐT.)
 - [ ] **Giai đoạn 3: Kết nối cấu hình PayOS Webhook chính thức.**
 - [ ] **Giai đoạn 4: Hoàn thiện hiệu ứng chuyển động & Kiểm thử Responsive trên thiết bị di động.**
 - [ ] **Giai đoạn 5: Deploy Public lên Vercel, Render và MongoDB Atlas.**
+
+### Ghi chú triển khai giai đoạn 2
+- Backend yêu cầu `MONGODB_URI` và không mở API nếu kết nối MongoDB thất bại.
+- Sản phẩm mẫu chỉ được tự seed khi collection `products` trống; lệnh `npm run seed:products` có thể chạy riêng để upsert lại dữ liệu mẫu.
+- Đơn hàng được lưu trong collection `orders`; tổng tiền và thông tin sản phẩm được tính lại từ MongoDB để không tin giá do trình duyệt gửi lên.
+- API tra cứu: `GET /api/payment/lookup-orders?phone=...` (tối đa 50 đơn, không trả địa chỉ/ghi chú khách hàng).
+- Thông tin cấu hình MongoDB nằm trong `BackEnd/.env.example`; URI thật cần được đặt trong `BackEnd/.env` hoặc biến môi trường của môi trường chạy.
+- Trang kiểm thử guest checkout độc lập `/test-checkout` dùng sản phẩm từ MongoDB, chỉ gửi `productId`/`quantity`, và không làm thay đổi giao diện Home Túy Loan.
+- API PayOS mới: `POST /api/payment/create-payment-link`, trạng thái `GET /api/payment/order/:orderCode`; tạo link thật chỉ khi đủ PayOS credentials.
+- Chế độ test 2.000đ chỉ ở local/non-production theo mặc định; production cần bật rõ `PAYMENT_TEST_MODE_ENABLED=true`.
+- Catalog hiện hành chỉ gồm Hộp Bánh Tráng Túy Loan (5 cái), giá 120.000đ, ID `tuy-loan-banh-trang-hop-5-cai`; asset public `/products/tuy-loan-rice-paper.png`. Lệnh seed đồng bộ catalog và xóa sản phẩm cũ ngoài danh sách seed trong collection `products`; không đụng collection `orders`.

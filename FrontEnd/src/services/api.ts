@@ -1,87 +1,25 @@
-import type { Product, CreateOrderPayload, OrderRecord } from '../types/index.js';
+import type {
+  Product, CreateOrderPayload, OrderRecord, OrderLookupRecord,
+  CreatePaymentLinkPayload, PaymentLinkResponse, PaymentOrderStatus
+} from '../types/index.js';
 
 // Fallback initial products if backend is not started
 const FALLBACK_PRODUCTS: Product[] = [
   {
-    id: 'tsvh-01',
-    name: 'Tàn Dạ Trầm Y',
-    subtitle: 'Nước hoa nghệ thuật Extrait de Parfum',
-    category: 'nuoc-hoa',
-    price: 1850000,
-    originalPrice: 2200000,
-    volume: '50ml',
-    description: 'Bản hòa tấu huyền ảo giữa trầm hương cổ thụ Tây Nguyên, nhựa cánh kiến trắng và khói trà ô long sấy lạnh trong đêm tĩnh mịch.',
-    story: 'Khắc họa khoảnh khắc tàn tro của nén hương tỏa lên làn khói mỏng manh trong căn phòng gỗ sau cơn mưa đầu hạ.',
-    notes: {
-      top: ['Hạt tiêu hồng', 'Cam Bergamot hun khói', 'Búp trà Ô Long'],
-      middle: ['Trầm hương cổ thụ', 'Nhựa thơm Myrrh', 'Hoa Diên Vĩ đen'],
-      base: ['Gỗ Đàn Hương Mysore', 'Hổ phách xám', 'Xạ hương sạch']
-    },
-    image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80',
-    badge: 'Signature Blend',
+    id: 'tuy-loan-banh-trang-hop-5-cai',
+    name: 'Hộp Bánh Tráng Túy Loan (5 cái)',
+    subtitle: 'Đặc sản Hòa Vang – Đà Nẵng',
+    category: 'dac-san',
+    price: 120000,
+    volume: 'Hộp 5 cái',
+    description: 'Bánh tráng Túy Loan nguyên chất, đặc sản làng nghề truyền thống Hòa Vang, Đà Nẵng.',
+    story: 'Giữ lửa Túy Loan – Giữ hồn xứ Quảng.',
+    notes: { top: [], middle: [], base: [] },
+    image: '/products/tuy-loan-rice-paper.png',
+    badge: 'Đặc sản Túy Loan',
     inStock: true,
-    rating: 4.9,
-    reviewsCount: 128
-  },
-  {
-    id: 'tsvh-02',
-    name: 'Vấn Hương Mộc Lan',
-    subtitle: 'Hương thơm nội tâm Á Đông thuần khiết',
-    category: 'nuoc-hoa',
-    price: 1650000,
-    volume: '50ml',
-    description: 'Sự tao nhã của hoa mộc lan sương sớm quấn quýt cùng gỗ tuyết tùng và làn gió mát thanh tao từ đỉnh núi cao.',
-    story: 'Như một buổi sớm mở cửa sổ ngắm sương đọng trên cánh hoa trắng ngần giữa viện trà thiền định.',
-    notes: {
-      top: ['Lá tre non', 'Bạch đậu khấu', 'Sương sớm mai'],
-      middle: ['Hoa Mộc Lan trắng', 'Bạch trà tuyết san', 'Hoa Nhài đêm'],
-      base: ['Gỗ Tuyết Tùng Virginia', 'Cỏ Hương Bài Haiti', 'Rêu sồi']
-    },
-    image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80',
-    badge: 'Bán chạy nhất',
-    inStock: true,
-    rating: 5.0,
-    reviewsCount: 94
-  },
-  {
-    id: 'tsvh-03',
-    name: 'Nhang Thiền Kỳ Nam Tự Nhiên',
-    subtitle: 'Trầm hương thanh tẩy không gian',
-    category: 'tram-huong',
-    price: 890000,
-    originalPrice: 1100000,
-    volume: 'Hộp 50 nén (cháy 45 phút)',
-    description: '100% bột trầm hương tự nhiên không tẩm ướp hóa chất, tạo vượng khí, xua tan căng thẳng mỏi mệt.',
-    story: 'Được chế tác thủ công từ các nghệ nhân làng nghề trầm hương truyền thống Khánh Hòa.',
-    notes: {
-      top: ['Vị ngọt thanh nhẹ'],
-      middle: ['Mùi khói trầm nguyên bản'],
-      base: ['Hương gỗ ấm vương vấn kéo dài']
-    },
-    image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80',
-    badge: 'Thuần thủ công',
-    inStock: true,
-    rating: 4.8,
-    reviewsCount: 215
-  },
-  {
-    id: 'tsvh-04',
-    name: 'Nến Thơm Dạ Nguyệt Tĩnh Lặng',
-    subtitle: 'Nến sáp đậu nành khoáng & bấc gỗ kêu lách tách',
-    category: 'nen-thom',
-    price: 520000,
-    volume: '220g (thời gian đốt 50 giờ)',
-    description: 'Hũ nến gốm men hỏa biến sang trọng, ngọn lửa ấm áp phát ra âm thanh bấc gỗ thư giãn như lò sưởi mùa đông.',
-    story: 'Khơi nguồn cảm hứng sáng tạo và đem lại giấc ngủ sâu êm đềm sau ngày dài bề bộn.',
-    notes: {
-      top: ['Quả Lê dại hun khói', 'Hương Thảo mộc'],
-      middle: ['Cây Xô Thơm (Clary Sage)', 'Gỗ thông bách'],
-      base: ['Đậu Tonka ngọt dịu', 'Gỗ Bạch Đàn', 'Vani Madagascar']
-    },
-    image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=800&q=80',
-    inStock: true,
-    rating: 4.9,
-    reviewsCount: 87
+    rating: 5,
+    reviewsCount: 0
   }
 ];
 
@@ -96,6 +34,31 @@ export async function fetchProducts(): Promise<Product[]> {
   }
 }
 
+export async function fetchCheckoutProducts(): Promise<Product[]> {
+  const res = await fetch('/api/products');
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Không thể tải sản phẩm từ MongoDB');
+  return data.data as Product[];
+}
+
+export async function createPaymentLink(payload: CreatePaymentLinkPayload): Promise<PaymentLinkResponse> {
+  const res = await fetch('/api/payment/create-payment-link', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Không thể tạo mã QR thanh toán');
+  return data as PaymentLinkResponse;
+}
+
+export async function fetchPaymentOrderStatus(orderCode: number): Promise<PaymentOrderStatus> {
+  const res = await fetch(`/api/payment/order/${orderCode}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Không thể kiểm tra trạng thái đơn hàng');
+  return data.order as PaymentOrderStatus;
+}
+
 export async function createOrder(payload: CreateOrderPayload): Promise<{
   success: boolean;
   order: OrderRecord;
@@ -107,39 +70,14 @@ export async function createOrder(payload: CreateOrderPayload): Promise<{
   };
   message?: string;
 }> {
-  try {
-    const res = await fetch('/api/payment/create-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) throw new Error('Network error');
-    return await res.json();
-  } catch {
-    // Client-side fallback if backend server isn't reachable
-    const fakeCode = Number(String(Date.now()).slice(-8));
-    const fakeQr = `https://img.vietqr.io/image/970422-0987654321-compact2.png?amount=${payload.totalAmount}&addInfo=TSVH%20${fakeCode}&accountName=TAN%20SAC%20VEN%20HUONG`;
-    return {
-      success: true,
-      order: {
-        orderCode: fakeCode,
-        customer: payload.customer,
-        items: payload.items,
-        totalAmount: payload.totalAmount,
-        paymentMethod: payload.paymentMethod,
-        status: 'PENDING',
-        createdAt: new Date().toISOString(),
-        qrCodeUrl: fakeQr
-      },
-      payment: {
-        checkoutUrl: null,
-        qrCode: fakeQr,
-        orderCode: fakeCode,
-        isSimulated: true
-      }
-    };
-  }
+  const res = await fetch('/api/payment/create-order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Không thể lưu đơn hàng');
+  return data;
 }
 
 export async function checkOrderStatus(orderCode: number): Promise<OrderRecord | null> {
@@ -151,6 +89,13 @@ export async function checkOrderStatus(orderCode: number): Promise<OrderRecord |
   } catch {
     return null;
   }
+}
+
+export async function lookupOrdersByPhone(phone: string): Promise<OrderLookupRecord[]> {
+  const res = await fetch(`/api/payment/lookup-orders?phone=${encodeURIComponent(phone)}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Không thể tra cứu đơn hàng');
+  return data.data;
 }
 
 export async function simulateSuccess(orderCode: number): Promise<boolean> {

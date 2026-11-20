@@ -8,7 +8,7 @@ export interface Product {
   id: string;
   name: string;
   subtitle: string;
-  category: 'nuoc-hoa' | 'tram-huong' | 'tinh-dau' | 'nen-thom';
+  category: 'nuoc-hoa' | 'tram-huong' | 'tinh-dau' | 'nen-thom' | 'dac-san';
   price: number;
   originalPrice?: number;
   volume: string;
@@ -60,4 +60,41 @@ export interface OrderRecord {
   paidAt?: string;
   checkoutUrl?: string;
   qrCodeUrl?: string;
+}
+
+export type OrderLookupRecord = Pick<OrderRecord, 'orderCode' | 'items' | 'totalAmount' | 'paymentMethod' | 'status' | 'createdAt' | 'paidAt'>;
+
+export interface GuestCheckoutItem {
+  productId: string;
+  quantity: number;
+}
+
+export interface GuestCustomerInfo {
+  fullName: string;
+  phone: string;
+  address: string;
+  note?: string;
+}
+
+export interface CreatePaymentLinkPayload {
+  customerInfo: GuestCustomerInfo;
+  items: GuestCheckoutItem[];
+  isTestMode: boolean;
+}
+
+export interface PaymentLinkResponse {
+  success: boolean;
+  checkoutUrl: string;
+  qrCode: string;
+  orderCode: number;
+  amount: number;
+}
+
+export interface PaymentOrderStatus {
+  orderCode: number;
+  totalAmount: number;
+  status: OrderRecord['status'];
+  createdAt: string;
+  paidAt?: string;
+  isTestMode: boolean;
 }
