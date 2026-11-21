@@ -45,17 +45,21 @@ function HomeApp() {
     document.documentElement.lang = language;
   }, [language]);
   useEffect(() => {
-    const syncHashRoute = () => {
-      if (window.location.hash === '#shop') setPage('shop');
-      else if (!window.location.hash) setPage('home');
-    };
-    syncHashRoute();
-    window.addEventListener('hashchange', syncHashRoute);
-    return () => window.removeEventListener('hashchange', syncHashRoute);
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
   }, []);
   const t = copy[language];
   const pages: Page[] = ['home', 'story', 'introduction', 'shop'];
-  const navigate = (next: Page) => { setPage(next); setMenuOpen(false); setShowOrderNotice(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const navigate = (next: Page) => {
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+    setPage(next);
+    setMenuOpen(false);
+    setShowOrderNotice(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   return <div className={`site-shell site-shell--${page}`}>
     <header className={`site-header ${isScrolled || menuOpen ? 'site-header--solid' : ''}`}>
       <button className="site-brand" onClick={() => navigate('home')} aria-label="LOICHOI home"><span className="loichoi-mark" role="img" aria-label="LOICHOI — EST 2026" /></button>

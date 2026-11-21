@@ -7,7 +7,7 @@ export function CommerceShell({ title, eyebrow, children }: { title: string; eye
       <a href="/" className="commerce-brand" aria-label="LOICHOI — Trang chủ"><span className="loichoi-mark" /></a>
     </header>
     <main className="commerce-main">
-      <a className="commerce-back" href="/#shop"><ArrowLeft size={16} /> Tiếp tục xem sản phẩm</a>
+      <a className="commerce-back" href="/"><ArrowLeft size={16} /> Tiếp tục xem sản phẩm</a>
       <div className="commerce-heading"><span>{eyebrow}</span><h1>{title}</h1><i /></div>
       {children}
     </main>
