@@ -283,7 +283,7 @@ html { scroll-padding-top: 90px; }
 /* Interaction and motion restored across the current Túy Loan pages. */
 .site-header { position: fixed; transition: background .35s ease, box-shadow .35s ease, padding .35s ease, min-height .35s ease; background: linear-gradient(180deg, #0b1114a8, transparent); }
 .site-header--solid { background: #151b1be8; backdrop-filter: blur(16px); box-shadow: 0 10px 34px #0003; padding-top: 14px; padding-bottom: 14px; min-height: 82px; }
-.site-shell--story .site-header:not(.site-header--solid), .site-shell--video .site-header:not(.site-header--solid), .site-shell--shop .site-header:not(.site-header--solid) { background: linear-gradient(180deg, #6e1011, #8b151600); }
+.site-shell--story .site-header:not(.site-header--solid), .site-shell--video .site-header:not(.site-header--solid), .site-shell--shop .site-header:not(.site-header--solid), .site-shell--introduction .site-header:not(.site-header--solid) { background: linear-gradient(180deg, #6e1011, #8b151600); }
 .site-brand, .site-nav button, .site-tools button, .site-tools > svg, .story-arrow, .story-dots button, .quantity-control button, .buy-button, .new-home__content > button, .new-footer__main > button { transition: color .25s ease, background .25s ease, opacity .25s ease, transform .25s ease, box-shadow .25s ease; }
 .site-brand:hover, .site-tools button:hover, .story-arrow:hover, .new-footer__main > button:hover { transform: translateY(-3px); }
 .site-nav button:hover { transform: translateY(-2px); }
@@ -348,4 +348,50 @@ html { scroll-padding-top: 90px; }
   .story-arrow:first-child { left: 3%; }
   .story-arrow:nth-of-type(2) { right: 3%; }
   .story-arrow:hover { transform: translateY(-50%) scale(1.05); }
+}
+
+/* Story slides refinement */
+.story-slide img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45); }
+.story-dots button { width: 8px; height: 8px; border-radius: 50%; background: #ffffff55; border: none; padding: 0; transition: all 0.25s ease; cursor: pointer; }
+.story-dots button.is-active { background: #ffeba5; width: 22px; border-radius: 4px; }
+.story-counter { position: absolute; top: 100px; background: rgba(18, 26, 23, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #ffeba5; border: 1px solid rgba(255, 235, 165, 0.2); z-index: 5; }
+@media (max-width: 850px) { .story-counter { top: 82px; font-size: 11px; padding: 3px 10px; } }
+
+/* Giới thiệu - Members Section Styling */
+.members-stage { min-height: 100svh; padding: 130px 5.5% 70px; display: flex; flex-direction: column; align-items: center; max-width: 1360px; margin: 0 auto; width: 100%; }
+.members-header { text-align: center; margin-bottom: 40px; max-width: 780px; }
+.members-tag { display: inline-block; color: #ffeba5; font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+.members-header h1 { font-family: Montserrat, sans-serif; color: #fff; font-size: clamp(26px, 3.8vw, 42px); font-weight: 900; letter-spacing: -0.02em; margin: 0 0 10px; }
+.members-header p { color: #f7e6ca; font-size: clamp(14px, 1.6vw, 16px); line-height: 1.6; opacity: 0.92; margin: 0 auto; }
+.members-divider { width: 50px; height: 3px; background: #ffeba5; margin: 16px auto 0; border-radius: 2px; }
+
+.members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; width: 100%; }
+.member-card { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 1638 / 2048; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 235, 165, 0.18); background: #1a0808; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+.member-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.35s ease; }
+.member-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65); border-color: rgba(255, 235, 165, 0.6); }
+.member-card:hover img { transform: scale(1.025); }
+.member-card__overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 65%, rgba(15, 6, 6, 0.88) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 14px; opacity: 0; transition: opacity 0.25s ease; }
+.member-card:hover .member-card__overlay { opacity: 1; }
+.member-card__overlay span { font-size: 13px; font-weight: 700; color: #ffeba5; background: rgba(0, 0, 0, 0.6); padding: 4px 12px; border-radius: 20px; backdrop-filter: blur(4px); }
+
+/* Member Lightbox Modal */
+.member-modal-backdrop { position: fixed; inset: 0; background: rgba(8, 10, 11, 0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.member-modal-content { position: relative; max-width: min(88vw, 480px); max-height: 90vh; display: flex; flex-direction: column; align-items: center; }
+.member-modal-content img { width: 100%; max-height: 74vh; object-fit: contain; border-radius: 14px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 235, 165, 0.3); }
+.member-modal-close { position: absolute; top: -44px; right: 0; background: rgba(255, 255, 255, 0.2); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+.member-modal-close:hover { background: rgba(255, 255, 255, 0.4); }
+.member-modal-nav { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 12px; color: #ffeba5; font-weight: 700; font-size: 14px; }
+.member-modal-nav button { background: rgba(255, 255, 255, 0.15); color: #fff; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: background 0.2s, color 0.2s; }
+.member-modal-nav button:hover { background: #ffeba5; color: #111; }
+
+@media (max-width: 1100px) {
+  .members-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+@media (max-width: 750px) {
+  .members-stage { padding: 95px 4% 45px; }
+  .members-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+@media (max-width: 420px) {
+  .members-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .member-card { border-radius: 10px; }
 }
