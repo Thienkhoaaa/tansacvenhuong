@@ -186,22 +186,23 @@ html { scroll-padding-top: 90px; }
 .commerce-footer p { color:#f2d9a7; font-family:'Beau Rivage',cursive; font-size:24px; margin:0; text-align:center; }
 .commerce-footer a { margin-left:16px; font-size:12px; font-weight:700; }
 @media(max-width:760px) {
-  .commerce-header { min-height:68px; padding:10px 5%; gap:12px; }
-  .commerce-header nav { gap:12px 16px; font-size:10px; letter-spacing:.08em; flex-wrap:wrap; justify-content:flex-end; }
-  .commerce-brand { width:80px; height:46px; }
-  .commerce-brand .loichoi-mark { width:115px; height:115px; }
-  .commerce-main { width:min(92vw, 100% - 24px); padding:16px 0 24px; }
-  .commerce-heading { margin:14px 0 18px; }
-  .commerce-heading h1 { font-size:clamp(26px, 6vw, 36px); margin:4px 0 6px; }
+  .commerce-header { min-height:64px; padding:8px 5%; gap:12px; }
+  .commerce-header nav { gap:10px 14px; font-size:10px; letter-spacing:.08em; flex-wrap:wrap; justify-content:flex-end; }
+  .commerce-brand { width:76px; height:44px; }
+  .commerce-brand .loichoi-mark { width:110px; height:110px; }
+  .commerce-main { width:min(92vw, 100% - 24px); padding:10px 0 16px; }
+  .commerce-back { font-size:12px; margin-bottom:4px; }
+  .commerce-heading { margin:8px 0 14px; }
+  .commerce-heading h1 { font-size:clamp(24px, 5.5vw, 32px); margin:4px 0 6px; }
   .commerce-checkout,.commerce-payment { grid-template-columns:1fr; }
   .commerce-product { display:grid; grid-template-columns:120px 1fr; gap:16px; align-items:center; }
   .commerce-product h2 { font-size:17px; }
   .commerce-product strong { font-size:20px; }
   .commerce-order-list article { grid-template-columns:1fr 1fr; }
-  .commerce-footer { flex-direction:column; align-items:center; justify-content:center; padding:16px 12px 20px; gap:6px; min-height:80px; text-align:center; }
-  .commerce-footer__logo { width:74px; height:42px; margin:0 auto; }
-  .commerce-footer__logo .loichoi-mark { width:102px; height:102px; }
-  .commerce-footer p { font-size:clamp(16px, 4.4vw, 20px); margin:0; text-align:center; line-height:1.2; max-width:92vw; white-space:nowrap; }
+  .commerce-footer { flex-direction:column; align-items:center; justify-content:center; padding:14px 12px 18px; gap:4px; min-height:76px; text-align:center; }
+  .commerce-footer__logo { width:70px; height:40px; margin:0 auto; }
+  .commerce-footer__logo .loichoi-mark { width:98px; height:98px; }
+  .commerce-footer p { font-size:clamp(15px, 4.2vw, 19px); margin:0; text-align:center; line-height:1.2; max-width:92vw; white-space:nowrap; }
   .commerce-footer a { width:100%; margin:0; text-align:center; }
 }
 /* The source artwork is used as a luminance mask: black becomes transparent. */
