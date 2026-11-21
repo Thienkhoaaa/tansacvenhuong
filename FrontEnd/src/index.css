@@ -127,14 +127,14 @@ html { scroll-padding-top: 90px; }
 @media (max-width: 767px) { .village-logo { width: 110px; height: 58px; } .village-footer { padding: 44px 6% 20px; } .village-footer__inner { grid-template-columns: 1fr; gap: 34px; padding-bottom: 42px; } .village-footer__identity a { width: 172px; height: 94px; } .village-footer__identity p { font-size: 26px; } }
 
 /* Commerce pages share the Túy Loan storefront palette and typography. */
-.commerce-shell { min-height: 100vh; background: #8b1516; color: #fff9e9; font-family: 'Plus Jakarta Sans', sans-serif; }
-.commerce-header { min-height: 98px; display:flex; align-items:center; gap:32px; padding:18px 5.5%; background:#761011; border-bottom:1px solid #fff1a533; }
+.commerce-shell { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; background: #8b1516; color: #fff9e9; font-family: 'Plus Jakarta Sans', sans-serif; }
+.commerce-header { flex: 0 0 auto; min-height: 98px; display:flex; align-items:center; gap:32px; padding:18px 5.5%; background:#761011; border-bottom:1px solid #fff1a533; }
 .commerce-brand { position:relative; display:block; width:120px; height:62px; overflow:hidden; flex:none; }
 .commerce-brand .loichoi-mark { width:150px; height:150px; }
 .commerce-header nav { display:flex; align-items:center; gap:clamp(18px,3vw,42px); margin-left:auto; font-size:12px; font-weight:800; letter-spacing:.06em; }
 .commerce-header nav a { line-height:1.7; white-space:nowrap; }
 .commerce-header nav a:hover,.commerce-footer a:hover { color:#fff1a5; }
-.commerce-main { width:min(1100px,89vw); min-height:calc(100vh - 220px); margin:auto; padding:36px 0 74px; }
+.commerce-main { flex: 1 0 auto; width:min(1100px,89vw); margin: 0 auto; padding:36px 0 74px; }
 .commerce-back { display:inline-flex; align-items:center; gap:8px; color:#ffe7bb; font-size:13px; }
 .commerce-heading { margin:26px 0 30px; text-align:center; }
 .commerce-heading span,.commerce-kicker { color:#ffe39c; font-size:11px; font-weight:800; letter-spacing:.2em; }
@@ -179,18 +179,38 @@ html { scroll-padding-top: 90px; }
 .commerce-order-list article strong { font-size:13px; }
 .status-paid { color:#28734a; }.status-pending { color:#976616; }.status-cancelled { color:#9a2b2b; }
 .commerce-empty { margin:24px 0; border-radius:10px; background:#f1e4c5; padding:16px; }
-.commerce-footer { min-height:120px; display:flex; align-items:center; justify-content:center; gap:18px; background:#111817; color:#f4eedc; }
-.commerce-footer .loichoi-mark { position:relative; left:auto; top:auto; transform:none; width:80px; height:80px; }
-.commerce-footer p { color:#f2d9a7; font-family:'Beau Rivage',cursive; font-size:24px; }
+.commerce-footer { flex: 0 0 auto; margin-top: auto; min-height:110px; display:flex; align-items:center; justify-content:center; gap:18px; background:#111817; color:#f4eedc; }
+.commerce-footer__logo { position:relative; display:block; width:90px; height:52px; overflow:hidden; flex:none; }
+.commerce-footer__logo .loichoi-mark { position:absolute; width:125px; height:125px; left:50%; top:50%; transform:translate(-50%, -50%); }
+.commerce-footer > .loichoi-mark { position:relative; left:auto; top:auto; transform:none; width:80px; height:48px; }
+.commerce-footer p { color:#f2d9a7; font-family:'Beau Rivage',cursive; font-size:24px; margin:0; }
 .commerce-footer a { margin-left:16px; font-size:12px; font-weight:700; }
-@media(max-width:760px) { .commerce-header { min-height:78px; padding:12px 5%; gap:12px; }.commerce-header nav { gap:14px 20px; font-size:10px; letter-spacing:.08em; flex-wrap:wrap; justify-content:flex-end; }.commerce-brand { width:85px; height:50px; }.commerce-brand .loichoi-mark { width:125px;height:125px; }.commerce-main { width:92vw; padding-top:24px; }.commerce-checkout,.commerce-payment { grid-template-columns:1fr; }.commerce-product { display:grid; grid-template-columns:120px 1fr; gap:16px; align-items:center; }.commerce-product h2 { font-size:17px; }.commerce-product strong { font-size:20px; }.commerce-order-list article { grid-template-columns:1fr 1fr; }.commerce-footer { flex-wrap:wrap; padding:16px; gap:8px; }.commerce-footer p { font-size:20px; }.commerce-footer a { width:100%; margin:0; text-align:center; } }
+@media(max-width:760px) {
+  .commerce-header { min-height:78px; padding:12px 5%; gap:12px; }
+  .commerce-header nav { gap:14px 20px; font-size:10px; letter-spacing:.08em; flex-wrap:wrap; justify-content:flex-end; }
+  .commerce-brand { width:85px; height:50px; }
+  .commerce-brand .loichoi-mark { width:125px;height:125px; }
+  .commerce-main { width:92vw; padding-top:24px; padding-bottom:40px; }
+  .commerce-checkout,.commerce-payment { grid-template-columns:1fr; }
+  .commerce-product { display:grid; grid-template-columns:120px 1fr; gap:16px; align-items:center; }
+  .commerce-product h2 { font-size:17px; }
+  .commerce-product strong { font-size:20px; }
+  .commerce-order-list article { grid-template-columns:1fr 1fr; }
+  .commerce-footer { flex-direction:column; align-items:center; justify-content:center; padding:20px 16px; gap:8px; min-height:90px; text-align:center; }
+  .commerce-footer__logo { width:80px; height:46px; }
+  .commerce-footer__logo .loichoi-mark { width:110px; height:110px; }
+  .commerce-footer p { font-size:20px; margin:0; text-align:center; line-height:1.3; }
+  .commerce-footer a { width:100%; margin:0; text-align:center; }
+}
 /* The source artwork is used as a luminance mask: black becomes transparent. */
 .village-logo, .village-footer__identity a { position: relative; }
 .loichoi-mark { display: block; position: absolute; width: 160px; height: 160px; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #f2d9a7; -webkit-mask-image: url('./assets/loichoi-logo-original.png'); mask-image: url('./assets/loichoi-logo-original.png'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; mask-mode: luminance; }
 .village-footer__identity .loichoi-mark { width: 250px; height: 250px; }
 @media (max-width: 767px) { .village-logo .loichoi-mark { width: 148px; height: 148px; } .village-footer__identity .loichoi-mark { width: 220px; height: 220px; } }
 .village-header:not(.village-header--solid) { background: linear-gradient(180deg, rgba(8, 13, 13, .66), rgba(8, 13, 13, 0)); }
-.site-shell { min-height: 100vh; background: #8b1516; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+.site-shell { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; background: #8b1516; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+.site-shell > main { flex: 1 0 auto; }
+.new-footer { flex: 0 0 auto; margin-top: auto; }
 .site-header { position: absolute; z-index: 30; top: 0; left: 0; right: 0; min-height: 110px; display: flex; align-items: flex-start; padding: 26px 5.5%; gap: 28px; }
 .site-brand, .new-footer__logo { position: relative; display: block; width: 100px; height: 60px; overflow: hidden; flex: none; }
 .site-brand .loichoi-mark { width: 138px; height: 138px; }
@@ -307,7 +327,7 @@ html { scroll-padding-top: 90px; }
 .new-footer__bottom span:last-child { display: inline-flex; align-items: center; gap: 6px; }
 .new-footer__bottom svg { color: #f2d9a7; }
 @media (max-width: 1050px) { .new-footer__main { grid-template-columns: 2fr 1fr 1.2fr; } .new-footer__column:last-child { grid-column: 1 / -1; } }
-@media (max-width: 650px) { .new-footer { padding: 50px 6% 24px; } .new-footer__main { grid-template-columns: 1fr 1fr; gap: 34px 18px; padding-bottom: 42px; } .new-footer__brand { grid-column: 1 / -1; } .new-footer__column:last-child { grid-column: 1 / -1; } .new-footer__bottom { flex-direction: column; align-items: flex-start; } }
+@media (max-width: 650px) { .new-footer { padding: 50px 6% 24px; } .new-footer__main { grid-template-columns: 1fr 1fr; gap: 34px 18px; padding-bottom: 42px; } .new-footer__brand { grid-column: 1 / -1; } .new-footer__logo { width: 115px; height: 68px; } .new-footer__logo .loichoi-mark { width: 160px; height: 160px; } .new-footer__column:last-child { grid-column: 1 / -1; } .new-footer__bottom { flex-direction: column; align-items: flex-start; } }
 /* Keep the larger story and introduction visuals within the viewport. */
 .site-shell--introduction .site-header:not(.site-header--solid) { background: linear-gradient(180deg, #6e1011, #8b151600); }
 .story-stage { gap: 3vw; }
