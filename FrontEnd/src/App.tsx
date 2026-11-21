@@ -143,7 +143,6 @@ function HomeApp() {
 
       {/* 2. CÂU CHUYỆN (10 ẢNH THEO THỨ TỰ) */}
       {page === 'story' && <section className="design-stage story-stage" aria-label={t.story}>
-        <div className="story-counter"><span>{storyIndex + 1} / {storyImages.length}</span></div>
         <button className="story-arrow" onClick={() => setStoryIndex((storyIndex - 1 + storyImages.length) % storyImages.length)} aria-label="Previous story slide"><ChevronLeft /></button>
         <div className="story-frame">
           <AnimatePresence mode="wait" initial={false}>
@@ -161,7 +160,6 @@ function HomeApp() {
       {/* 3. GIỚI THIỆU (12 THÀNH VIÊN RESPONSIVE GRID) */}
       {page === 'introduction' && <section className="members-stage" aria-label={t.nav[2]}>
         <div className="members-header">
-          <span className="members-tag">{t.membersTag}</span>
           <h1>{t.membersTitle}</h1>
           <p>{t.membersSubtitle}</p>
           <div className="members-divider" />
@@ -178,9 +176,6 @@ function HomeApp() {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedMember(index); }}
             >
               <img src={src} alt={`Thành viên ${index + 1}`} loading="lazy" />
-              <div className="member-card__overlay">
-                <span>Phóng to 🔍</span>
-              </div>
             </div>
           ))}
         </div>
