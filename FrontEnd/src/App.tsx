@@ -5,7 +5,6 @@ import homePhoto from './assets/tuy-loan-home.png';
 import storyCover from './assets/pdf/story-cover.png';
 import storyFire from './assets/pdf/story-fire.png';
 import productBox from './assets/pdf/product-box.png';
-import { TestCheckoutPage } from './pages/TestCheckoutPage.js';
 import { CheckoutPage } from './pages/CheckoutPage.js';
 import { OrderLookupPage } from './pages/OrderLookupPage.js';
 
@@ -66,7 +65,6 @@ function HomeApp() {
     <nav className={`site-nav ${menuOpen ? 'site-nav--open' : ''}`} aria-label="Main navigation">
         {pages.map((item, index) => <button key={item} className={page === item ? 'is-active' : ''} onClick={() => navigate(item)}>{t.nav[index]}</button>)}
         <button onClick={() => { window.location.href = '/tra-cuu-don-hang'; }}>TRA CỨU ĐƠN HÀNG</button>
-        <button onClick={() => { window.location.href = '/test-thanh-toan'; }} style={{ background: '#f59e0b', color: '#18181b', fontWeight: 800, padding: '4px 10px', borderRadius: '6px' }}>TEST THANH TOÁN (2K)</button>
       </nav>
       <div className="site-tools">
         <Bell size={25} aria-label={language === 'vi' ? 'Thông báo' : 'Notifications'} />
@@ -97,10 +95,7 @@ function HomeApp() {
         <img src={productBox} alt={t.product} />
         <h1 id="product-title">{t.product}</h1>
         <div className="shop-product__details"><strong>120.000đ</strong><div className="quantity-control"><span>{t.quantity}</span><button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity">−</button><output>{quantity}</output><button onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity">+</button></div></div>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '10px' }}>
-          <button className="buy-button" onClick={() => { window.location.href = `/checkout?quantity=${quantity}`; }}>{t.buy}</button>
-          <button className="buy-button" onClick={() => { window.location.href = '/test-thanh-toan'; }} style={{ background: '#f59e0b', color: '#18181b' }}>TEST THANH TOÁN (2.000đ)</button>
-        </div>
+        <button className="buy-button" onClick={() => { window.location.href = `/checkout?quantity=${quantity}`; }}>{t.buy}</button>
         <AnimatePresence>{showOrderNotice && <motion.p className="order-notice" role="status" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{t.orderPending}</motion.p>}</AnimatePresence>
       </div></section>}
       </motion.div>
@@ -113,7 +108,7 @@ function HomeApp() {
           <p>{t.footer}</p>
           <span className="new-footer__heritage"><Flame size={16} />{t.heritage}</span>
         </div>
-        <div className="new-footer__column"><h2>{t.explore}</h2><nav aria-label={t.explore}>{pages.map((item, index) => <button key={item} onClick={() => navigate(item)}>{t.nav[index]}</button>)}<button onClick={() => { window.location.href = '/tra-cuu-don-hang'; }}>Tra cứu đơn hàng</button><button onClick={() => { window.location.href = '/test-thanh-toan'; }} style={{ color: '#fbbf24' }}>🧪 Test thanh toán (2k)</button></nav></div>
+        <div className="new-footer__column"><h2>{t.explore}</h2><nav aria-label={t.explore}>{pages.map((item, index) => <button key={item} onClick={() => navigate(item)}>{t.nav[index]}</button>)}<button onClick={() => { window.location.href = '/tra-cuu-don-hang'; }}>Tra cứu đơn hàng</button></nav></div>
         <div className="new-footer__column"><h2>{t.productInfo}</h2><button className="new-footer__product" onClick={() => navigate('shop')}>{t.product}</button><p>120.000đ · {language === 'vi' ? '5 cái' : '5 pieces'}</p><button className="new-footer__top" onClick={() => navigate('home')}>{t.backTop} ↑</button></div>
         <div className="new-footer__column"><h2>{t.visit}</h2><p className="new-footer__location"><MapPin size={17} />{t.location}</p></div>
       </div>
@@ -124,7 +119,10 @@ function HomeApp() {
 
 export function App() {
   const path = window.location.pathname;
-  if (path === '/test-checkout' || path === '/test-thanh-toan') return <TestCheckoutPage />;
+  if (path === '/test-checkout' || path === '/test-thanh-toan') {
+    window.location.replace('/checkout');
+    return null;
+  }
   if (path === '/checkout') return <CheckoutPage />;
   if (path === '/tra-cuu-don-hang' || path === '/lookup-orders') return <OrderLookupPage />;
   return <HomeApp />;
