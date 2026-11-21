@@ -127,20 +127,20 @@ html { scroll-padding-top: 90px; }
 @media (max-width: 767px) { .village-logo { width: 110px; height: 58px; } .village-footer { padding: 44px 6% 20px; } .village-footer__inner { grid-template-columns: 1fr; gap: 34px; padding-bottom: 42px; } .village-footer__identity a { width: 172px; height: 94px; } .village-footer__identity p { font-size: 26px; } }
 
 /* Commerce pages share the Túy Loan storefront palette and typography. */
-.commerce-shell { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; background: #8b1516; color: #fff9e9; font-family: 'Plus Jakarta Sans', sans-serif; }
+.commerce-shell { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; background: #8b1516; color: #fff9e9; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; width: 100%; box-sizing: border-box; }
 .commerce-header { flex: 0 0 auto; min-height: 98px; display:flex; align-items:center; gap:32px; padding:18px 5.5%; background:#761011; border-bottom:1px solid #fff1a533; }
 .commerce-brand { position:relative; display:block; width:120px; height:62px; overflow:hidden; flex:none; }
 .commerce-brand .loichoi-mark { width:150px; height:150px; }
 .commerce-header nav { display:flex; align-items:center; gap:clamp(18px,3vw,42px); margin-left:auto; font-size:12px; font-weight:800; letter-spacing:.06em; }
 .commerce-header nav a { line-height:1.7; white-space:nowrap; }
 .commerce-header nav a:hover,.commerce-footer a:hover { color:#fff1a5; }
-.commerce-main { flex: 1 0 auto; width:min(1100px,89vw); margin: 0 auto; padding:36px 0 74px; }
+.commerce-main { flex: 1 0 auto; width:min(1100px,89vw); max-width: 100%; box-sizing: border-box; margin: 0 auto; padding:36px 0 74px; }
 .commerce-back { display:inline-flex; align-items:center; gap:8px; color:#ffe7bb; font-size:13px; }
 .commerce-heading { margin:26px 0 30px; text-align:center; }
 .commerce-heading span,.commerce-kicker { color:#ffe39c; font-size:11px; font-weight:800; letter-spacing:.2em; }
 .commerce-heading h1 { margin:8px 0 12px; font-size:clamp(32px,5vw,50px); font-weight:800; }
 .commerce-heading i { display:block; width:62px; height:2px; margin:auto; background:#ffe39c; }
-.commerce-card { border:1px solid #fff3d966; border-radius:22px; background:#fff5d7; color:#29251e; box-shadow:0 24px 70px #39080855; }
+.commerce-card { border:1px solid #fff3d966; border-radius:22px; background:#fff5d7; color:#29251e; box-shadow:0 24px 70px #39080855; box-sizing: border-box; max-width: 100%; }
 .commerce-checkout { display:grid; grid-template-columns:.85fr 1fr; gap:clamp(24px,5vw,56px); padding:clamp(20px,4vw,42px); }
 .commerce-product img { width:100%; border-radius:16px; object-fit:cover; }
 .commerce-product h2,.commerce-fields h2 { margin:12px 0 8px; font-size:22px; font-weight:800; }
@@ -148,7 +148,7 @@ html { scroll-padding-top: 90px; }
 .commerce-product strong { color:#861719; font-size:24px; }
 .commerce-fields { display:flex; flex-direction:column; gap:15px; }
 .commerce-fields label,.commerce-lookup form label { display:grid; gap:7px; color:#51463b; font-size:13px; font-weight:700; }
-.commerce-fields input,.commerce-fields textarea,.commerce-lookup input { width:100%; border:1px solid #d8c8a8; border-radius:9px; background:#fffdf7; padding:12px 14px; color:#29251e; outline:none; }
+.commerce-fields input,.commerce-fields textarea,.commerce-lookup input { width:100%; border:1px solid #d8c8a8; border-radius:9px; background:#fffdf7; padding:12px 14px; color:#29251e; outline:none; box-sizing: border-box; }
 .commerce-fields input:focus,.commerce-fields textarea:focus,.commerce-lookup input:focus { border-color:#8b1516; box-shadow:0 0 0 3px #8b151622; }
 .commerce-fields textarea { resize:vertical; }
 .commerce-submit,.commerce-lookup form button { display:inline-flex; align-items:center; justify-content:center; gap:9px; border-radius:9px; background:#8b1516; padding:14px 18px; color:white; font-size:13px; font-weight:800; letter-spacing:.05em; }
@@ -167,11 +167,11 @@ html { scroll-padding-top: 90px; }
 .commerce-paid-note { color:#66594b; line-height:1.7; }
 .commerce-lookup-cta { display:inline-flex; margin-top:10px; border-radius:9px; background:#8b1516; padding:13px 18px; color:white; font-size:12px; font-weight:800; letter-spacing:.07em; }
 .commerce-lookup-cta:hover { background:#6d1012; }
-.commerce-lookup { padding:clamp(22px,4vw,42px); }
-.commerce-lookup > p { margin-bottom:22px; color:#66594b; }
-.commerce-lookup form > div { display:flex; gap:10px; margin-top:8px; }
-.commerce-lookup form > div input { flex:1; }
-.commerce-lookup form button { min-width:132px; }
+.commerce-lookup { padding:clamp(16px,4vw,36px); box-sizing: border-box; }
+.commerce-lookup > p { margin-bottom:18px; color:#66594b; line-height:1.55; }
+.commerce-lookup form > div { display:flex; gap:8px; margin-top:8px; }
+.commerce-lookup form > div input { flex:1; min-width:0; }
+.commerce-lookup form button { flex:0 0 auto; white-space:nowrap; padding:12px 16px; }
 .commerce-order-list { display:grid; gap:10px; margin:24px 0; }
 .commerce-order-list article { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; border:1px solid #dfd0b1; border-radius:12px; padding:16px; }
 .commerce-order-list article div { display:grid; gap:5px; }
@@ -179,29 +179,29 @@ html { scroll-padding-top: 90px; }
 .commerce-order-list article strong { font-size:13px; }
 .status-paid { color:#28734a; }.status-pending { color:#976616; }.status-cancelled { color:#9a2b2b; }
 .commerce-empty { margin:24px 0; border-radius:10px; background:#f1e4c5; padding:16px; }
-.commerce-footer { flex: 0 0 auto; margin-top: auto; min-height:110px; display:flex; align-items:center; justify-content:center; gap:18px; background:#111817; color:#f4eedc; }
+.commerce-footer { flex: 0 0 auto; margin-top: auto; min-height:100px; display:flex; align-items:center; justify-content:center; gap:18px; background:#111817; color:#f4eedc; width:100%; box-sizing:border-box; }
 .commerce-footer__logo { position:relative; display:block; width:90px; height:52px; overflow:hidden; flex:none; }
 .commerce-footer__logo .loichoi-mark { position:absolute; width:125px; height:125px; left:50%; top:50%; transform:translate(-50%, -50%); }
 .commerce-footer > .loichoi-mark { position:relative; left:auto; top:auto; transform:none; width:80px; height:48px; }
-.commerce-footer p { color:#f2d9a7; font-family:'Beau Rivage',cursive; font-size:24px; margin:0; }
+.commerce-footer p { color:#f2d9a7; font-family:'Beau Rivage',cursive; font-size:24px; margin:0; text-align:center; }
 .commerce-footer a { margin-left:16px; font-size:12px; font-weight:700; }
 @media(max-width:760px) {
   .commerce-header { min-height:68px; padding:10px 5%; gap:12px; }
   .commerce-header nav { gap:12px 16px; font-size:10px; letter-spacing:.08em; flex-wrap:wrap; justify-content:flex-end; }
   .commerce-brand { width:80px; height:46px; }
   .commerce-brand .loichoi-mark { width:115px; height:115px; }
-  .commerce-main { width:92vw; padding:18px 0 28px; }
-  .commerce-heading { margin:16px 0 20px; }
-  .commerce-heading h1 { font-size:clamp(26px, 6vw, 36px); margin:6px 0 8px; }
+  .commerce-main { width:min(92vw, 100% - 24px); padding:16px 0 24px; }
+  .commerce-heading { margin:14px 0 18px; }
+  .commerce-heading h1 { font-size:clamp(26px, 6vw, 36px); margin:4px 0 6px; }
   .commerce-checkout,.commerce-payment { grid-template-columns:1fr; }
   .commerce-product { display:grid; grid-template-columns:120px 1fr; gap:16px; align-items:center; }
   .commerce-product h2 { font-size:17px; }
   .commerce-product strong { font-size:20px; }
   .commerce-order-list article { grid-template-columns:1fr 1fr; }
-  .commerce-footer { flex-direction:column; align-items:center; justify-content:center; padding:18px 16px 24px; gap:6px; min-height:85px; text-align:center; }
-  .commerce-footer__logo { width:76px; height:44px; }
-  .commerce-footer__logo .loichoi-mark { width:105px; height:105px; }
-  .commerce-footer p { font-size:clamp(16px, 4.2vw, 20px); margin:0; text-align:center; line-height:1.3; max-width:92vw; }
+  .commerce-footer { flex-direction:column; align-items:center; justify-content:center; padding:16px 12px 20px; gap:6px; min-height:80px; text-align:center; }
+  .commerce-footer__logo { width:74px; height:42px; margin:0 auto; }
+  .commerce-footer__logo .loichoi-mark { width:102px; height:102px; }
+  .commerce-footer p { font-size:clamp(16px, 4.4vw, 20px); margin:0; text-align:center; line-height:1.2; max-width:92vw; white-space:nowrap; }
   .commerce-footer a { width:100%; margin:0; text-align:center; }
 }
 /* The source artwork is used as a luminance mask: black becomes transparent. */
