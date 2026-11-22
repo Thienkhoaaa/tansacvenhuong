@@ -1,34 +1,34 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bell, CircleUserRound, ChevronLeft, ChevronRight, Flame, Heart, MapPin, Menu, X } from 'lucide-react';
-import homePhoto from './assets/tuy-loan-home.png';
+import { Bell, CircleUserRound, ChevronLeft, ChevronRight, Flame, Heart, MapPin, Menu, Pause, Play, RotateCcw, RotateCw, X } from 'lucide-react';
+import homePhoto from './assets/HOME.webp';
 import productBox from './assets/pdf/product-box.png';
 
-// 10 Story slides in numerical order (1 -> 10)
-import story1 from './assets/story/story-1.png';
-import story2 from './assets/story/story-2.png';
-import story3 from './assets/story/story-3.png';
-import story4 from './assets/story/story-4.png';
-import story5 from './assets/story/story-5.png';
-import story6 from './assets/story/story-6.png';
-import story7 from './assets/story/story-7.png';
-import story8 from './assets/story/story-8.png';
-import story9 from './assets/story/story-9.png';
-import story10 from './assets/story/story-10.png';
+// 10 Story slides in numerical order (1 -> 10) - Optimized WebP for lightning-fast loading
+import story1 from './assets/story/story-1.webp';
+import story2 from './assets/story/story-2.webp';
+import story3 from './assets/story/story-3.webp';
+import story4 from './assets/story/story-4.webp';
+import story5 from './assets/story/story-5.webp';
+import story6 from './assets/story/story-6.webp';
+import story7 from './assets/story/story-7.webp';
+import story8 from './assets/story/story-8.webp';
+import story9 from './assets/story/story-9.webp';
+import story10 from './assets/story/story-10.webp';
 
-// 12 Member posters for Giới thiệu
-import member1 from './assets/members/member-1.jpg';
-import member2 from './assets/members/member-2.jpg';
-import member3 from './assets/members/member-3.jpg';
-import member4 from './assets/members/member-4.jpg';
-import member5 from './assets/members/member-5.jpg';
-import member6 from './assets/members/member-6.jpg';
-import member7 from './assets/members/member-7.jpg';
-import member8 from './assets/members/member-8.jpg';
-import member9 from './assets/members/member-9.jpg';
-import member10 from './assets/members/member-10.jpg';
-import member11 from './assets/members/member-11.jpg';
-import member12 from './assets/members/member-12.jpg';
+// 12 Member posters for Giới thiệu (including ẢNH của HOÀNG at position 4) - Optimized WebP
+import member1 from './assets/members/member-1.webp';
+import member2 from './assets/members/member-2.webp';
+import member3 from './assets/members/member-3.webp';
+import member4 from './assets/members/member-4.webp';
+import member5 from './assets/members/member-5.webp';
+import member6 from './assets/members/member-6.webp';
+import member7 from './assets/members/member-7.webp';
+import member8 from './assets/members/member-8.webp';
+import member9 from './assets/members/member-9.webp';
+import member10 from './assets/members/member-10.webp';
+import member11 from './assets/members/member-11.webp';
+import member12 from './assets/members/member-12.webp';
 
 import { CheckoutPage } from './pages/CheckoutPage.js';
 import { OrderLookupPage } from './pages/OrderLookupPage.js';
@@ -42,7 +42,6 @@ const copy = {
     heading: 'TÚY LOAN', slogan: 'Giữ lửa Túy Loan – Giữ hồn xứ Quảng',
     intro: 'Hơn 500 năm về trước, cùng với dấu chân mở cõi của ông cha ta và sự hình thành của ngôi làng cổ Túy Loan bên dòng sông thơ mộng, nghề làm bánh tráng đã bén rễ và trở thành nét sinh hoạt gắn liền với nếp nhà xứ Quảng. Từ những phiên chợ quê xưa cho đến mâm cỗ ngày Tết của bao thế hệ người Đà Nẵng, thức quà mộc mạc ấy chưa từng vắng bóng, lặng lẽ đi qua bao thăng trầm của thời cuộc để trở thành một phần máu thịt của vùng đất Hòa Vang.',
     story: 'CÂU CHUYỆN', storyLabel: 'Người giữ lửa',
-    membersTag: 'DỰ ÁN TÚY LOAN · LỐI CHỜI',
     membersTitle: 'ĐỘI NGŨ THỰC HIỆN',
     membersSubtitle: 'Những gương mặt trẻ mang trọn tâm huyết và tình yêu dành cho làng nghề bánh tráng truyền thống xứ Quảng.',
     videoUnavailable: 'Video giới thiệu đang được cập nhật', product: 'HỘP BÁNH TRÁNG TÚY LOAN (5 CÁI)', quantity: 'Số lượng', buy: 'MUA HÀNG', orderPending: 'Thông tin đặt hàng đang được cập nhật.', footer: 'Nghề bánh tráng Túy Loan được gìn giữ qua đôi bàn tay người làm nghề và ngọn lửa bếp quê.', backTop: 'VỀ ĐẦU TRANG', explore: 'KHÁM PHÁ', productInfo: 'SẢN PHẨM', visit: 'GỐC LÀNG NGHỀ', location: 'Làng cổ Túy Loan, Hòa Vang, Đà Nẵng', heritage: 'Hơn 500 năm gìn giữ nghề bánh tráng', madeFor: 'Dành cho người yêu hương vị xứ Quảng',
@@ -52,7 +51,6 @@ const copy = {
     heading: 'TÚY LOAN', slogan: 'Keeping the Túy Loan fire alive – Preserving the spirit of Quảng',
     intro: 'More than 500 years ago, as our ancestors settled the land and the ancient village of Túy Loan took shape beside its river, rice-paper making became part of everyday life in Quảng. From village markets to Lunar New Year feasts in Đà Nẵng, this humble food has endured through generations and become part of the heritage of Hòa Vang.',
     story: 'OUR STORY', storyLabel: 'Keeper of the fire',
-    membersTag: 'TUY LOAN HERITAGE PROJECT',
     membersTitle: 'PROJECT TEAM MEMBERS',
     membersSubtitle: 'The dedicated young faces carrying passion and love for the traditional Quang craft village.',
     videoUnavailable: 'Introduction video coming soon', product: 'TÚY LOAN RICE PAPER BOX (5 PIECES)', quantity: 'Quantity', buy: 'BUY NOW', orderPending: 'Ordering details are being updated.', footer: 'The craft of Túy Loan rice paper lives on through skilled hands and the warmth of the village hearth.', backTop: 'BACK TO TOP', explore: 'EXPLORE', productInfo: 'PRODUCT', visit: 'OUR ROOTS', location: 'Túy Loan ancient village, Hòa Vang, Đà Nẵng', heritage: 'Over 500 years of rice-paper making', madeFor: 'For those who cherish the flavours of Quảng',
@@ -71,6 +69,10 @@ function HomeApp() {
   const [showOrderNotice, setShowOrderNotice] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Video playback ref & state
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 24);
     onScroll();
@@ -88,6 +90,16 @@ function HomeApp() {
     }
   }, []);
 
+  // Performance cache warming: preload adjacent story slides to eliminate flipping lag
+  useEffect(() => {
+    if (page === 'story') {
+      const next = (storyIndex + 1) % storyImages.length;
+      const prev = (storyIndex - 1 + storyImages.length) % storyImages.length;
+      const i1 = new Image(); i1.src = storyImages[next];
+      const i2 = new Image(); i2.src = storyImages[prev];
+    }
+  }, [page, storyIndex]);
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (selectedMember !== null) {
@@ -102,6 +114,21 @@ function HomeApp() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [selectedMember, page, storyIndex]);
+
+  const toggleVideoPlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+    } else {
+      videoRef.current.pause();
+    }
+  };
+
+  const skipVideo = (seconds: number) => {
+    if (!videoRef.current) return;
+    const newTime = videoRef.current.currentTime + seconds;
+    videoRef.current.currentTime = Math.max(0, Math.min(videoRef.current.duration || 0, newTime));
+  };
 
   const t = copy[language];
   const pages: Page[] = ['home', 'story', 'introduction', 'video', 'shop'];
@@ -134,9 +161,9 @@ function HomeApp() {
     <main><AnimatePresence mode="wait" initial={false}>
       <motion.div key={page} className="page-transition" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.36, ease: 'easeOut' }}>
       
-      {/* 1. TRANG CHỦ */}
+      {/* 1. TRANG CHỦ (Ảnh HOME.png thay thế chính xác vị trí ảnh trang chủ) */}
       {page === 'home' && <section className="new-home" aria-labelledby="home-title">
-        <img src={homePhoto} alt={language === 'vi' ? 'Nghệ nhân bên bếp bánh tráng Túy Loan' : 'Artisan at a Túy Loan rice-paper stove'} />
+        <img src={homePhoto} alt={language === 'vi' ? 'Nghệ nhân bên bếp bánh tráng Túy Loan' : 'Artisan at a Túy Loan rice-paper stove'} decoding="async" />
         <div className="new-home__shade" />
         <div className="new-home__content"><h1 id="home-title">{t.heading}</h1><p className="new-home__slogan">{t.slogan}</p><p className="new-home__intro">{t.intro}</p><button onClick={() => navigate('story')}>{t.story} <Flame size={24} fill="currentColor" /></button></div>
       </section>}
@@ -147,7 +174,7 @@ function HomeApp() {
         <div className="story-frame">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={storyIndex} initial={{ opacity: 0, x: 22 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -22 }} transition={{ duration: 0.28 }} className="story-slide">
-              <img src={storyImages[storyIndex]} alt={`Câu chuyện Túy Loan - Trang ${storyIndex + 1}`} />
+              <img src={storyImages[storyIndex]} alt={`Câu chuyện Túy Loan - Trang ${storyIndex + 1}`} decoding="async" />
             </motion.div>
           </AnimatePresence>
         </div>
@@ -157,7 +184,7 @@ function HomeApp() {
         </div>
       </section>}
 
-      {/* 3. GIỚI THIỆU (12 THÀNH VIÊN RESPONSIVE GRID) */}
+      {/* 3. GIỚI THIỆU (12 THÀNH VIÊN RESPONSIVE GRID - ẢNH CỦA HOÀNG TẠI VỊ TRÍ 4) */}
       {page === 'introduction' && <section className="members-stage" aria-label={t.nav[2]}>
         <div className="members-header">
           <h1>{t.membersTitle}</h1>
@@ -175,23 +202,65 @@ function HomeApp() {
               aria-label={`Thành viên ${index + 1}`}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedMember(index); }}
             >
-              <img src={src} alt={`Thành viên ${index + 1}`} loading="lazy" />
+              <img src={src} alt={`Thành viên ${index + 1}`} loading="lazy" decoding="async" />
             </div>
           ))}
         </div>
       </section>}
 
-      {/* 4. VIDEO (DANH MỤC RIÊNG BIỆT) */}
+      {/* 4. VIDEO (VIDEO PLAYER TEASER TÚY LOAN VỚI NÚT DỪNG VÀ TUA 5S) */}
       {page === 'video' && <section className="design-stage video-stage" aria-label={t.nav[3]}>
-        <div className="video-placeholder">
-          <div className="play-glyph" aria-hidden="true" />
-          <p>{t.videoUnavailable}</p>
+        <div className="video-container">
+          <video
+            ref={videoRef}
+            src="/videos/teaser-tuy-loan.mp4"
+            controls
+            preload="metadata"
+            playsInline
+            className="video-player"
+            onPlay={() => setIsVideoPlaying(true)}
+            onPause={() => setIsVideoPlaying(false)}
+          />
+          <div className="video-custom-controls">
+            <button
+              type="button"
+              className="video-ctrl-btn"
+              onClick={() => skipVideo(-5)}
+              title="Lùi lại 5 giây"
+              aria-label="Lùi lại 5 giây"
+            >
+              <RotateCcw size={18} />
+              <span>-5s</span>
+            </button>
+            
+            <button
+              type="button"
+              className="video-ctrl-btn video-ctrl-btn--play"
+              onClick={toggleVideoPlay}
+              title={isVideoPlaying ? "Tạm dừng" : "Phát"}
+              aria-label={isVideoPlaying ? "Tạm dừng" : "Phát"}
+            >
+              {isVideoPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+              <span>{isVideoPlaying ? 'Dừng' : 'Phát'}</span>
+            </button>
+            
+            <button
+              type="button"
+              className="video-ctrl-btn"
+              onClick={() => skipVideo(5)}
+              title="Tua tới 5 giây"
+              aria-label="Tua tới 5 giây"
+            >
+              <span>+5s</span>
+              <RotateCw size={18} />
+            </button>
+          </div>
         </div>
       </section>}
 
       {/* 5. CỬA HÀNG */}
       {page === 'shop' && <section id="shop" className="design-stage shop-stage" aria-labelledby="product-title"><div className="shop-product">
-        <img src={productBox} alt={t.product} />
+        <img src={productBox} alt={t.product} decoding="async" />
         <h1 id="product-title">{t.product}</h1>
         <div className="shop-product__details"><strong>120.000đ</strong><div className="quantity-control"><span>{t.quantity}</span><button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity">−</button><output>{quantity}</output><button onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity">+</button></div></div>
         <button className="buy-button" onClick={() => { window.location.href = `/checkout?quantity=${quantity}`; }}>{t.buy}</button>
@@ -220,7 +289,7 @@ function HomeApp() {
             onClick={e => e.stopPropagation()}
           >
             <button className="member-modal-close" onClick={() => setSelectedMember(null)} aria-label="Đóng"><X size={20} /></button>
-            <img src={memberImages[selectedMember]} alt={`Thành viên ${selectedMember + 1}`} />
+            <img src={memberImages[selectedMember]} alt={`Thành viên ${selectedMember + 1}`} decoding="async" />
             <div className="member-modal-nav">
               <button onClick={() => setSelectedMember((selectedMember - 1 + memberImages.length) % memberImages.length)}><ChevronLeft size={18} /> Trước</button>
               <span>{selectedMember + 1} / {memberImages.length}</span>
