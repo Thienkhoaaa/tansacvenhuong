@@ -17,6 +17,8 @@ node_modules/
 
 # Media binaries
 *.mp4
+*OFFICIAL.png
+*OFFICAL.png
 
 # Build outputs
 dist/

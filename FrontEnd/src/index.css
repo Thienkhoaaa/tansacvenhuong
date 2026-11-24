@@ -253,7 +253,7 @@ html { scroll-padding-top: 90px; }
 .play-glyph { width: 0; height: 0; border-top: 40px solid transparent; border-bottom: 40px solid transparent; border-left: 70px solid white; margin-left: 20px; }
 .video-placeholder p { position: absolute; bottom: 24px; color: #bbb; font-size: 14px; }
 .shop-product { display: flex; flex-direction: column; align-items: center; width: min(90vw, 720px); }
-.shop-product > img { width: min(100%, 620px); aspect-ratio: 620/490; border-radius: 24px; object-fit: cover; }
+.shop-product > img { width: min(100%, 660px); aspect-ratio: 16 / 10; border-radius: 24px; object-fit: cover; box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45); }
 .shop-product h1 { font-size: clamp(20px, 2.4vw, 29px); font-weight: 800; text-align: center; margin: 12px 0 6px; }
 .shop-product__details { display: flex; align-items: center; justify-content: space-between; width: min(100%, 620px); gap: 20px; }
 .shop-product__details > strong { font-size: 27px; }
@@ -419,13 +419,36 @@ html { scroll-padding-top: 90px; }
   box-shadow: 0 2px 8px rgba(185, 28, 28, 0.15);
 }
 
-/* Video Player & Custom 5s Skip Controls */
+/* Video Stage, Player & Custom 5s Skip Controls */
+.video-stage {
+  gap: 3vw;
+  position: relative;
+}
 .video-container {
-  width: min(88vw, 1080px);
+  width: min(84vw, 1040px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+}
+.video-header {
+  text-align: center;
+  margin-bottom: 2px;
+}
+.video-title {
+  font-family: Montserrat, sans-serif;
+  font-size: clamp(20px, 2.8vw, 32px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffeba5;
+  text-transform: uppercase;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+  margin: 0;
+}
+.video-player-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 .video-player {
   width: 100%;
@@ -476,10 +499,23 @@ html { scroll-padding-top: 90px; }
   background: #fff;
   color: #000;
 }
+@media (max-width: 850px) {
+  .video-stage {
+    gap: 8px;
+    position: relative;
+  }
+  .video-container {
+    width: 90vw;
+    gap: 12px;
+  }
+  .video-title {
+    font-size: clamp(16px, 4.2vw, 22px);
+  }
+}
 @media (max-width: 600px) {
   .video-container {
     width: 94vw;
-    gap: 12px;
+    gap: 10px;
   }
   .video-player {
     border-radius: 12px;

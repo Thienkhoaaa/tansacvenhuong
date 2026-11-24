@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, CircleUserRound, ChevronLeft, ChevronRight, Flame, Heart, MapPin, Menu, Pause, Play, RotateCcw, RotateCw, X } from 'lucide-react';
 import homePhoto from './assets/HOME.webp';
-import productBox from './assets/pdf/product-box.png';
+import productBox from './assets/pdf/product-box.webp';
 
 // 10 Story slides in numerical order (1 -> 10) - Optimized WebP for lightning-fast loading
 import story1 from './assets/story/story-1.webp';
@@ -35,6 +35,25 @@ import { OrderLookupPage } from './pages/OrderLookupPage.js';
 
 const storyImages = [story1, story2, story3, story4, story5, story6, story7, story8, story9, story10];
 const memberImages = [member1, member2, member3, member4, member5, member6, member7, member8, member9, member10, member11, member12];
+
+const videoList = [
+  {
+    id: 'teaser',
+    src: '/videos/teaser-tuy-loan.mp4',
+    title: {
+      vi: 'TEASER TÚY LOAN',
+      en: 'TÚY LOAN TEASER'
+    }
+  },
+  {
+    id: 'story',
+    src: '/videos/story.mp4',
+    title: {
+      vi: 'STORY TÚY LOAN',
+      en: 'TÚY LOAN STORY'
+    }
+  }
+];
 
 const copy = {
   vi: {
@@ -70,8 +89,18 @@ function HomeApp() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Video playback ref & state
+  const [videoIndex, setVideoIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
+  useEffect(() => {
+    setIsVideoPlaying(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+      videoRef.current.load();
+    }
+  }, [videoIndex]);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 24);
@@ -109,11 +138,14 @@ function HomeApp() {
       } else if (page === 'story') {
         if (e.key === 'ArrowLeft') setStoryIndex((storyIndex - 1 + storyImages.length) % storyImages.length);
         if (e.key === 'ArrowRight') setStoryIndex((storyIndex + 1) % storyImages.length);
+      } else if (page === 'video') {
+        if (e.key === 'ArrowLeft') setVideoIndex((videoIndex - 1 + videoList.length) % videoList.length);
+        if (e.key === 'ArrowRight') setVideoIndex((videoIndex + 1) % videoList.length);
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [selectedMember, page, storyIndex]);
+  }, [selectedMember, page, storyIndex, videoIndex]);
 
   const toggleVideoPlay = () => {
     if (!videoRef.current) return;
@@ -208,19 +240,35 @@ function HomeApp() {
         </div>
       </section>}
 
-      {/* 4. VIDEO (VIDEO PLAYER TEASER TÚY LOAN VỚI NÚT DỪNG VÀ TUA 5S) */}
+      {/* 4. VIDEO (VIDEO SLIDER: TEASER TÚY LOAN & STORY TÚY LOAN) */}
       {page === 'video' && <section className="design-stage video-stage" aria-label={t.nav[3]}>
+        <button
+          className="story-arrow"
+          onClick={() => setVideoIndex((videoIndex - 1 + videoList.length) % videoList.length)}
+          aria-label="Previous video"
+        >
+          <ChevronLeft />
+        </button>
+
         <div className="video-container">
-          <video
-            ref={videoRef}
-            src="/videos/teaser-tuy-loan.mp4"
-            controls
-            preload="metadata"
-            playsInline
-            className="video-player"
-            onPlay={() => setIsVideoPlaying(true)}
-            onPause={() => setIsVideoPlaying(false)}
-          />
+          <div className="video-header">
+            <h2 className="video-title">{videoList[videoIndex].title[language]}</h2>
+          </div>
+
+          <div className="video-player-wrapper">
+            <video
+              key={videoList[videoIndex].src}
+              ref={videoRef}
+              src={videoList[videoIndex].src}
+              controls
+              preload="metadata"
+              playsInline
+              className="video-player"
+              onPlay={() => setIsVideoPlaying(true)}
+              onPause={() => setIsVideoPlaying(false)}
+            />
+          </div>
+
           <div className="video-custom-controls">
             <button
               type="button"
@@ -241,7 +289,7 @@ function HomeApp() {
               aria-label={isVideoPlaying ? "Tạm dừng" : "Phát"}
             >
               {isVideoPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-              <span>{isVideoPlaying ? 'Dừng' : 'Phát'}</span>
+              <span>{isVideoPlaying ? (language === 'vi' ? 'Dừng' : 'Pause') : (language === 'vi' ? 'Phát' : 'Play')}</span>
             </button>
             
             <button
@@ -255,6 +303,25 @@ function HomeApp() {
               <RotateCw size={18} />
             </button>
           </div>
+        </div>
+
+        <button
+          className="story-arrow"
+          onClick={() => setVideoIndex((videoIndex + 1) % videoList.length)}
+          aria-label="Next video"
+        >
+          <ChevronRight />
+        </button>
+
+        <div className="story-dots" aria-label="Video selection">
+          {videoList.map((_, i) => (
+            <button
+              key={i}
+              className={videoIndex === i ? 'is-active' : ''}
+              onClick={() => setVideoIndex(i)}
+              aria-label={videoList[i].title[language]}
+            />
+          ))}
         </div>
       </section>}
 
